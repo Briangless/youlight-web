@@ -401,8 +401,9 @@ svg{ display:block; }
 .placa{
   position:relative; overflow:hidden;
   min-height: 140px;
-  display:flex; align-items:flex-end;
-  padding: 1.4rem 1.5rem;
+  display:flex; align-items:center; justify-content:center;
+  padding: 1.4rem 1rem;
+  text-align:center;
   border-radius: var(--r-sm);
   border: 1px solid var(--line);
   background: linear-gradient(180deg, #171412, #121010);
@@ -428,8 +429,10 @@ svg{ display:block; }
 }
 .placa-nombre{
   position:relative; z-index:1;
+  display:block; width:100%;
   font-family: var(--font-display); font-weight:700;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-size: clamp(.95rem, 1.7vw, 1.4rem);
+  line-height:1.2;
   color: var(--cream-34);
   transition: color .5s var(--ease-out);
 }
@@ -479,7 +482,7 @@ svg{ display:block; }
 .escenas{ position:absolute; inset:0; }
 .escena{
   position:absolute; inset:0;
-  opacity:0; transition: opacity .9s var(--ease-in-out);
+  opacity:0; transition: opacity .5s var(--ease-out);
   will-change: opacity;
 }
 .escena.is-active{ opacity:1; }
@@ -527,7 +530,7 @@ svg{ display:block; }
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   width:min(90vw,600px); padding: 0 1rem;
   opacity:0; filter: blur(8px);
-  transition: opacity .7s var(--ease-in-out), filter .7s var(--ease-in-out);
+  transition: opacity .4s var(--ease-out), filter .4s var(--ease-out);
 }
 .recorrido-caption.is-active{ opacity:1; filter: blur(0); }
 .recorrido-caption h3{
@@ -703,6 +706,10 @@ svg{ display:block; }
   .prod-card{ grid-column: span 3; }
   .prod-featured{ grid-column: span 6; }
   .prod-wide{ grid-column: span 6; }
+
+  .muro{ grid-template-columns: repeat(2, 1fr); }
+  .placa{ min-height: 118px; }
+  .placa-ancha{ grid-column: span 2; }
 }
 
 @media (max-width: 620px){
@@ -712,6 +719,9 @@ svg{ display:block; }
   .prod-card, .prod-featured, .prod-wide{ grid-column: span 6; }
   .prod-wide{ flex-direction:column; align-items:flex-start; gap:1.3rem; }
   .footer-nav{ gap:1.2rem; }
+
+  .muro{ gap:.6rem; }
+  .placa{ min-height: 104px; padding: 1.1rem .8rem; }
 }
 
 /* ==========================================================================

@@ -555,9 +555,13 @@ svg{ display:block; }
   background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 40%, rgba(8,7,7,.72) 100%);
 }
 /* Scrim behind the caption so type always stays readable over any photo */
+/* Darkens whatever the scene is doing so the caption reads on top of any
+   composition, not just the ones that happen to leave the centre empty. */
 .escena-scrim{
   position:absolute; inset:0; pointer-events:none;
-  background: linear-gradient(180deg, rgba(10,9,8,.55) 0%, rgba(10,9,8,.15) 32%, rgba(10,9,8,.20) 62%, rgba(10,9,8,.72) 100%);
+  background:
+    radial-gradient(ellipse 70% 46% at 50% 50%, rgba(8,7,6,.55), transparent 72%),
+    linear-gradient(180deg, rgba(10,9,8,.6) 0%, rgba(10,9,8,.34) 30%, rgba(10,9,8,.4) 55%, rgba(10,9,8,.78) 100%);
 }
 
 .recorrido-overlay{ position:absolute; inset:0; z-index:2; text-align:center; pointer-events:none; }

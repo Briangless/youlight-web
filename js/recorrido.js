@@ -345,31 +345,34 @@
     root.appendChild(quad('plano', [[0, 100], [L, B], [R, B], [100, 100]],
       'background:linear-gradient(180deg,#1A1613,#0E0C0B);'));
 
-    // far wall: floor-to-ceiling glass onto the city, cool against the warm office
+    // far wall: a band of glass onto the city, kept modest so it recedes
+    // behind the caption instead of reading as a solid foreground slab
     var winCount = 3, wallW = R - L, wgap = wallW * 0.035;
     var winW = (wallW - wgap * (winCount + 1)) / winCount;
+    var winTop = T + (B - T) * 0.1, winBot = B - (B - T) * 0.04;
+    var winH = winBot - winTop;
     var buildings = m.low ? 2 : 3;
     for (var wi = 0; wi < winCount; wi++) {
       var wx = L + wgap + wi * (winW + wgap);
       root.appendChild(el('plano', [
-        'left:' + wx + '%;top:' + T + '%;width:' + winW + '%;height:' + (B - T) + '%;',
-        'background:linear-gradient(180deg, rgba(120,150,175,.24) 0%, rgba(46,60,74,.30) 55%, rgba(30,26,22,.22) 100%);',
-        'box-shadow:inset 0 0 0 1px rgba(226,238,247,.12);'
+        'left:' + wx + '%;top:' + winTop + '%;width:' + winW + '%;height:' + winH + '%;',
+        'background:linear-gradient(180deg, rgba(120,150,175,.15) 0%, rgba(46,60,74,.19) 55%, rgba(30,26,22,.15) 100%);',
+        'box-shadow:inset 0 0 0 1px rgba(226,238,247,.08);'
       ].join('')));
 
       for (var bd = 0; bd < buildings; bd++) {
         var bw = winW / buildings * 0.7;
         var bx = wx + (winW / buildings) * bd + (winW / buildings - bw) / 2;
         var frac = 0.26 + ((wi * 3 + bd * 5) % 5) * 0.08;
-        var bh = frac * (B - T);
+        var bh = frac * winH;
         root.appendChild(el('plano', [
-          'left:' + bx + '%;top:' + (B - bh) + '%;width:' + bw + '%;height:' + bh + '%;',
-          'background:rgba(16,22,30,.88);'
+          'left:' + bx + '%;top:' + (winBot - bh) + '%;width:' + bw + '%;height:' + bh + '%;',
+          'background:rgba(16,22,30,.8);'
         ].join('')));
         if ((wi + bd) % 3 === 0) {
           // one lit window in the skyline: the warm note surviving outside
           root.appendChild(el('plano', [
-            'left:' + (bx + bw * 0.5) + '%;top:' + (B - bh * 0.62) + '%;',
+            'left:' + (bx + bw * 0.5) + '%;top:' + (winBot - bh * 0.62) + '%;',
             'width:' + (bw * 0.24) + '%;height:' + (bh * 0.07) + '%;',
             'transform:translate(-50%,-50%);background:rgba(240,196,140,.6);'
           ].join('')));
@@ -409,15 +412,24 @@
         'background:linear-gradient(180deg, rgba(214,147,80,.65), rgba(214,147,80,.15));'));
     });
 
-    // round downlights sitting inside the channel
-    [0.06, 0.24, 0.42, 0.6, 0.76, 0.9].forEach(function (t) {
+    // round downlights sitting inside the channel, spaced so consecutive
+    // glows don't fuse into one blown-out smear
+    [0.06, 0.26, 0.46, 0.64, 0.8].forEach(function (t) {
       var s = shrink(t);
       root.appendChild(el('luminaria', [
         'left:50%;top:' + ceilY(t, 0) + '%;',
         'width:' + (3.4 * s * m.spread) + '%;height:' + (1.7 * s) + '%;',
         'transform:translate(-50%,-50%);border-radius:50%;',
         'background:radial-gradient(circle, #FFF6E8, #FFE2B4 60%, rgba(255,226,180,.2));',
-        'box-shadow:0 0 ' + (30 * s * S) + 'px ' + (9 * s * S) + 'px rgba(255,226,180,' + (0.55 * s + 0.15) + ');'
+        'box-shadow:0 0 ' + (18 * s * S) + 'px ' + (5 * s * S) + 'px rgba(255,226,180,' + (0.5 * s + 0.12) + ');'
+      ].join('')));
+
+      // the pool each one drops on the aisle floor below
+      root.appendChild(el('charco', [
+        'left:50%;top:' + floorY(t + 0.05) + '%;',
+        'width:' + (22 * s * m.spread) + '%;height:' + (4.6 * s) + '%;',
+        'transform:translate(-50%,-50%);',
+        'background:radial-gradient(ellipse at center, rgba(255,232,198,' + (0.22 * s + 0.04) + '), transparent 70%);'
       ].join('')));
     });
 
@@ -526,24 +538,6 @@
       });
     });
 
-    // linear fixtures running the length of the aisle
-    [0.04, 0.2, 0.36, 0.52, 0.68, 0.82].forEach(function (t) {
-      var s = shrink(t);
-      root.appendChild(el('luminaria', [
-        'left:50%;top:' + ceilY(t, 0) + '%;',
-        'width:' + (20 * s * m.spread) + '%;height:' + (1.5 * s) + '%;',
-        'transform:translate(-50%,-50%);',
-        'background:linear-gradient(90deg,rgba(255,244,228,.35),#FFF6E8 22%,#FFF6E8 78%,rgba(255,244,228,.35));',
-        'box-shadow:0 0 ' + (34 * s * S) + 'px ' + (9 * s * S) + 'px rgba(255,232,200,' + (0.5 * s + 0.16) + ');'
-      ].join('')));
-
-      root.appendChild(el('charco', [
-        'left:50%;top:' + floorY(t + 0.05) + '%;',
-        'width:' + (24 * s * m.spread) + '%;height:' + (5 * s) + '%;',
-        'transform:translate(-50%,-50%);',
-        'background:radial-gradient(ellipse at center, rgba(255,232,198,' + (0.24 * s + 0.05) + '), transparent 70%);'
-      ].join('')));
-    });
   }
 
   /* --------------------------------------------------------------------- */

@@ -445,21 +445,55 @@
         // desk surface, catching the light from above
         var dTop1 = f1 - 11 * s1, dTop2 = f2 - 11 * s2;
         var dx1 = x1 + (VP_X - x1) * 0.34, dx2 = x2 + (VP_X - x2) * 0.34;
-        root.appendChild(quad('plano', [[dx1, dTop1], [dx2, dTop2], [x2, dTop2 + 1.1 * s2], [x1, dTop1 + 1.4 * s1]],
-          'background:linear-gradient(180deg,#6B563E,#3B2F22);'));
+        var edgeL = dTop1 + 1.4 * s1, edgeR = dTop2 + 1.1 * s2;
+        root.appendChild(quad('plano', [[dx1, dTop1], [dx2, dTop2], [x2, edgeR], [x1, edgeL]],
+          'background:linear-gradient(180deg,#7A6248,#4A3B2B);'));
+        // top highlight where the desk edge catches the ceiling light
+        root.appendChild(quad('plano', [[dx1, dTop1], [dx2, dTop2], [dx2, dTop2 + 0.5 * s2], [dx1, dTop1 + 0.6 * s1]],
+          'background:rgba(255,230,195,.30);'));
 
-        // monitor: a small cool rectangle glowing above the desk
+        // modesty panel: gives the desk a visible front face, so it reads as
+        // a solid piece of furniture instead of a flat floating plane
+        root.appendChild(quad('plano', [[x1, edgeL], [x2, edgeR], [x2, edgeR + 7.5 * s2], [x1, edgeL + 7.5 * s1]],
+          'background:linear-gradient(180deg,#2E2519,#1A140E);box-shadow:inset 0 0 0 1px rgba(242,237,228,.05);'));
+
+        // monitor, on a stand that plants it on the desk
         var mx = (dx1 + dx2) / 2 + (side < 0 ? 1.2 : -1.2) * s1;
-        var my = (dTop1 + dTop2) / 2 - 6 * s1;
+        var my = (dTop1 + dTop2) / 2 - 6.4 * s1;
         root.appendChild(el('plano', [
           'left:' + mx + '%;top:' + my + '%;',
-          'width:' + (5.2 * s1 * m.spread) + '%;height:' + (5.4 * s1) + '%;',
-          'transform:translate(-50%,-50%);border-radius:' + (1.5 * S) + 'px;',
-          'background:linear-gradient(180deg, rgba(198,222,240,.55), rgba(140,175,205,.30));',
+          'width:' + (6.4 * s1 * m.spread) + '%;height:' + (4.6 * s1) + '%;',
+          'transform:translate(-50%,-50%);border-radius:' + (1.3 * S) + 'px;',
+          'background:linear-gradient(180deg, rgba(210,230,244,.6), rgba(140,175,205,.32));',
           'box-shadow:0 0 ' + (16 * s1 * S) + 'px ' + (4 * s1 * S) + 'px rgba(180,210,235,.28);'
         ].join('')));
+        root.appendChild(el('plano', [                         // stand
+          'left:' + mx + '%;top:' + (my + 3 * s1) + '%;',
+          'width:' + (0.6 * s1 * m.spread) + '%;height:' + (2.2 * s1) + '%;',
+          'transform:translate(-50%,-50%);background:#2A241D;'
+        ].join('')));
+        root.appendChild(el('plano', [                         // foot
+          'left:' + mx + '%;top:' + (my + 4.4 * s1) + '%;',
+          'width:' + (2.8 * s1 * m.spread) + '%;height:' + (0.5 * s1) + '%;',
+          'transform:translate(-50%,-50%);background:#2A241D;'
+        ].join('')));
 
-        // task light under the overhead shelf, the reason the desk is readable
+        // desk lamp: a small warm source at the back corner of the desk
+        var lx = side < 0 ? dx2 : dx1, ly = side < 0 ? dTop2 : dTop1;
+        root.appendChild(el('plano', [
+          'left:' + lx + '%;top:' + (ly - 3 * s1) + '%;',
+          'width:' + (0.55 * s1 * m.spread) + '%;height:' + (3 * s1) + '%;',
+          'transform:translate(-50%,-50%);background:#332A1D;'
+        ].join('')));
+        root.appendChild(el('luminaria', [
+          'left:' + lx + '%;top:' + (ly - 6 * s1) + '%;',
+          'width:' + (2.3 * s1 * m.spread) + '%;height:' + (2.3 * s1) + '%;',
+          'transform:translate(-50%,-50%);border-radius:50%;',
+          'background:radial-gradient(circle,#FFE9C8,#D68A3E);',
+          'box-shadow:0 0 ' + (16 * s1 * S) + 'px ' + (4 * s1 * S) + 'px rgba(214,138,62,.6);'
+        ].join('')));
+
+        // task light glow pooling on the desk, the reason it is readable
         root.appendChild(el('charco', [
           'left:' + ((dx1 + dx2) / 2) + '%;top:' + ((dTop1 + dTop2) / 2) + '%;',
           'width:' + (13 * s1 * m.spread) + '%;height:' + (3.4 * s1) + '%;',
@@ -467,24 +501,28 @@
           'background:radial-gradient(ellipse at center, rgba(255,230,190,' + (0.34 * s1 + 0.06) + '), transparent 72%);'
         ].join('')));
 
-        // someone at the desk: head and shoulders, visible over the low
-        // partition, the way a colleague reads over a cubicle wall
-        if (bi < 3) {
-          var pcx = (x1 + x2) / 2, pcy = (p1 + p2) / 2;
-          root.appendChild(el('plano', [
-            'left:' + pcx + '%;top:' + (pcy - 1.7 * s1) + '%;',
-            'width:' + (7 * s1 * m.spread) + '%;height:' + (4.6 * s1) + '%;',
-            'transform:translate(-50%,-50%);',
-            'border-radius:' + (3.5 * S) + 'px ' + (3.5 * S) + 'px 0 0;',
-            'background:#17130F;'
-          ].join('')));
-          root.appendChild(el('plano', [
-            'left:' + pcx + '%;top:' + (pcy - 4.7 * s1) + '%;',
-            'width:' + (3.2 * s1 * m.spread) + '%;height:' + (3.2 * s1) + '%;',
-            'transform:translate(-50%,-50%);border-radius:50%;',
-            'background:#1E1712;'
-          ].join('')));
-        }
+        // an office chair pulled up to the desk: backrest, seat, pedestal.
+        // Unmistakably furniture, not a figure.
+        var chx = (x1 + x2) / 2;
+        var chy = (f1 + f2) / 2 - 6 * s1;
+        root.appendChild(el('plano', [                         // backrest
+          'left:' + chx + '%;top:' + (chy - 4.2 * s1) + '%;',
+          'width:' + (5.4 * s1 * m.spread) + '%;height:' + (6.5 * s1) + '%;',
+          'transform:translate(-50%,-50%);',
+          'border-radius:' + (2.6 * S) + 'px ' + (2.6 * S) + 'px ' + (1 * S) + 'px ' + (1 * S) + 'px;',
+          'background:#1C1712;'
+        ].join('')));
+        root.appendChild(el('plano', [                         // seat
+          'left:' + chx + '%;top:' + chy + '%;',
+          'width:' + (6.4 * s1 * m.spread) + '%;height:' + (2.4 * s1) + '%;',
+          'transform:translate(-50%,-50%);border-radius:' + (1.4 * S) + 'px;',
+          'background:#241D16;'
+        ].join('')));
+        root.appendChild(el('plano', [                         // pedestal
+          'left:' + chx + '%;top:' + (chy + 2.8 * s1) + '%;',
+          'width:' + (1 * s1 * m.spread) + '%;height:' + (3.4 * s1) + '%;',
+          'transform:translate(-50%,-50%);background:#15110D;'
+        ].join('')));
       });
     });
 

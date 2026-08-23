@@ -35,9 +35,12 @@
     var nav = document.getElementById('mobile-nav');
     if (!toggle || !nav) return;
 
+    var header = document.getElementById('site-header');
+
     var setOpen = function (open) {
       toggle.setAttribute('aria-expanded', String(open));
       nav.classList.toggle('is-open', open);
+      if (header) header.classList.toggle('is-nav-open', open);
       nav.inert = !open; // keep collapsed links out of tab order / AT
     };
 

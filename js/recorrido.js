@@ -72,6 +72,7 @@
       w: w,
       h: h,
       wide: wide,
+      low: Math.min(w, h) < 520,                  // phone: keep the blur count down
       S: Math.min(w, h) / 380,                    // object scale, 1 on a phone
       spread: wide ? Math.max(0.52, 1 / ratio) : 1 // horizontal compression
     };
@@ -324,16 +325,17 @@
   }
 
   /* --------------------------------------------------------------------- */
-  /* Scene 2: an office corridor, receding                                  */
+  /* Scene 2: an open plan office, seen down the aisle between cubicles      */
   /* --------------------------------------------------------------------- */
   function pasillo(root, m) {
     var S = m.S;
-    var half = 24 * m.spread;            // half width of the far opening
+    var half = 26 * m.spread;
     var L = VP_X - half, R = VP_X + half;
-    var T = 36, B = 66;
+    var T = 34, B = 68;
 
     root.appendChild(el('plano', 'background:linear-gradient(180deg,#100E0D,#0C0A09);'));
 
+    // shell of the room
     root.appendChild(quad('plano', [[0, 0], [100, 0], [R, T], [L, T]],
       'background:linear-gradient(180deg,#1C1917,#131110);'));
     root.appendChild(quad('plano', [[0, 0], [L, T], [L, B], [0, 100]],
@@ -347,45 +349,81 @@
       'background:linear-gradient(180deg,#242019,#16130F);'
     ].join('')));
 
-    // office doors set into both walls
-    var wallX = function (edge, t) { return edge + (VP_X + (edge < VP_X ? -half : half) - edge) * t; };
-    var doors = [[0.06, 0.24], [0.34, 0.47], [0.56, 0.66]];
+    // suspended ceiling grid, the tell that this is an office and not a hallway
+    [0.16, 0.34, 0.5, 0.64, 0.76].forEach(function (t) {
+      var s = shrink(t);
+      var w = (towardVP(VP_X + 52 * m.spread, t) - VP_X) * 2;
+      root.appendChild(el('plano', [
+        'left:50%;top:' + ceilY(t, 0) + '%;',
+        'width:' + w + '%;height:' + (0.35 * s) + '%;transform:translate(-50%,-50%);',
+        'background:rgba(242,237,228,.09);'
+      ].join('')));
+    });
 
-    doors.forEach(function (d) {
-      [0, 100].forEach(function (edge) {
-        var x1 = wallX(edge, d[0]), x2 = wallX(edge, d[1]);
-        var c1 = ceilY(d[0], 0), c2 = ceilY(d[1], 0);
+    // --- cubicles down both sides of the aisle ---
+    var bays = [[0.02, 0.2], [0.22, 0.38], [0.4, 0.53], [0.55, 0.65]];
+    var lateral = 30 * m.spread;
+
+    bays.forEach(function (d, bi) {
+      [-1, 1].forEach(function (side) {
+        var x1 = towardVP(VP_X + side * lateral, d[0]);
+        var x2 = towardVP(VP_X + side * lateral, d[1]);
         var f1 = floorY(d[0]), f2 = floorY(d[1]);
-        var t1 = c1 + (f1 - c1) * 0.30, t2 = c2 + (f2 - c2) * 0.30;
+        var s1 = shrink(d[0]), s2 = shrink(d[1]);
 
-        // door leaf
-        root.appendChild(quad('plano', [[x1, t1], [x2, t2], [x2, f2], [x1, f1]],
-          'background:linear-gradient(' + (edge === 0 ? '90deg' : '270deg') + ',#171412,#221E1A);' +
-          'box-shadow:inset 0 0 0 1px rgba(242,237,228,.07);'));
+        // partition panel: a low divider, not a full wall
+        var p1 = f1 - 19 * s1, p2 = f2 - 19 * s2;
+        root.appendChild(quad('plano', [[x1, p1], [x2, p2], [x2, f2], [x1, f1]],
+          'background:linear-gradient(' + (side < 0 ? '90deg' : '270deg') + ',#1D1A17,#2A2622);' +
+          'box-shadow:inset 0 0 0 1px rgba(242,237,228,.06);'));
 
-        // glazed panel beside it, catching the corridor light
-        var g1 = t1 + (f1 - t1) * 0.10, g2 = t2 + (f2 - t2) * 0.10;
-        var gb1 = t1 + (f1 - t1) * 0.55, gb2 = t2 + (f2 - t2) * 0.55;
-        var gx1 = x1 + (x2 - x1) * 0.62, gx2 = x1 + (x2 - x1) * 0.94;
-        root.appendChild(quad('plano', [[gx1, g1], [gx2, g2], [gx2, gb2], [gx1, gb1]],
-          'background:linear-gradient(180deg, rgba(226,238,247,.16), rgba(226,238,247,.05));'));
+        // the lit top rail of the divider
+        root.appendChild(quad('plano', [[x1, p1], [x2, p2], [x2, p2 + 0.7 * s2], [x1, p1 + 0.9 * s1]],
+          'background:rgba(255,226,180,.32);'));
+
+        // desk surface, catching the light from above
+        var dTop1 = f1 - 11 * s1, dTop2 = f2 - 11 * s2;
+        var dx1 = x1 + (VP_X - x1) * 0.34, dx2 = x2 + (VP_X - x2) * 0.34;
+        root.appendChild(quad('plano', [[dx1, dTop1], [dx2, dTop2], [x2, dTop2 + 1.1 * s2], [x1, dTop1 + 1.4 * s1]],
+          'background:linear-gradient(180deg,#6B563E,#3B2F22);'));
+
+        // monitor: a small cool rectangle glowing above the desk
+        var mx = (dx1 + dx2) / 2 + (side < 0 ? 1.2 : -1.2) * s1;
+        var my = (dTop1 + dTop2) / 2 - 6 * s1;
+        root.appendChild(el('plano', [
+          'left:' + mx + '%;top:' + my + '%;',
+          'width:' + (5.2 * s1 * m.spread) + '%;height:' + (5.4 * s1) + '%;',
+          'transform:translate(-50%,-50%);border-radius:' + (1.5 * S) + 'px;',
+          'background:linear-gradient(180deg, rgba(198,222,240,.55), rgba(140,175,205,.30));',
+          'box-shadow:0 0 ' + (16 * s1 * S) + 'px ' + (4 * s1 * S) + 'px rgba(180,210,235,.28);'
+        ].join('')));
+
+        // task light under the overhead shelf, the reason the desk is readable
+        root.appendChild(el('charco', [
+          'left:' + ((dx1 + dx2) / 2) + '%;top:' + ((dTop1 + dTop2) / 2) + '%;',
+          'width:' + (13 * s1 * m.spread) + '%;height:' + (3.4 * s1) + '%;',
+          'transform:translate(-50%,-50%);',
+          'background:radial-gradient(ellipse at center, rgba(255,230,190,' + (0.34 * s1 + 0.06) + '), transparent 72%);'
+        ].join('')));
+
+        // chair back peeking over the divider
+        if (bi < 3) {
+          root.appendChild(el('plano', [
+            'left:' + ((x1 + x2) / 2) + '%;top:' + (((p1 + p2) / 2) - 3.5 * s1) + '%;',
+            'width:' + (4.6 * s1 * m.spread) + '%;height:' + (4.5 * s1) + '%;',
+            'transform:translate(-50%,-50%);border-radius:' + (2.5 * S) + 'px;',
+            'background:#15130F;'
+          ].join('')));
+        }
       });
     });
 
-    // skirting board keeps the eye travelling down the corridor
-    [0, 100].forEach(function (edge) {
-      var xn = wallX(edge, 0), xf = wallX(edge, 0.92);
-      var fn = floorY(0), ff = floorY(0.92);
-      root.appendChild(quad('plano', [[xn, fn - 2.2], [xf, ff - 0.5], [xf, ff], [xn, fn]],
-        'background:rgba(242,237,228,.10);'));
-    });
-
-    // recessed fixtures marching down the ceiling
+    // linear fixtures running the length of the aisle
     [0.04, 0.2, 0.36, 0.52, 0.68, 0.82].forEach(function (t) {
       var s = shrink(t);
       root.appendChild(el('luminaria', [
         'left:50%;top:' + ceilY(t, 0) + '%;',
-        'width:' + (22 * s * m.spread) + '%;height:' + (1.5 * s) + '%;',
+        'width:' + (20 * s * m.spread) + '%;height:' + (1.5 * s) + '%;',
         'transform:translate(-50%,-50%);',
         'background:linear-gradient(90deg,rgba(255,244,228,.35),#FFF6E8 22%,#FFF6E8 78%,rgba(255,244,228,.35));',
         'box-shadow:0 0 ' + (34 * s * S) + 'px ' + (9 * s * S) + 'px rgba(255,232,200,' + (0.5 * s + 0.16) + ');'
@@ -393,7 +431,7 @@
 
       root.appendChild(el('charco', [
         'left:50%;top:' + floorY(t + 0.05) + '%;',
-        'width:' + (26 * s * m.spread) + '%;height:' + (5 * s) + '%;',
+        'width:' + (24 * s * m.spread) + '%;height:' + (5 * s) + '%;',
         'transform:translate(-50%,-50%);',
         'background:radial-gradient(ellipse at center, rgba(255,232,198,' + (0.24 * s + 0.05) + '), transparent 70%);'
       ].join('')));
@@ -523,6 +561,39 @@
       ], 'background:rgba(232,170,100,.16);'));
     });
 
+    // roll up door on the far wall: the quickest way to say "nave", not "sótano"
+    var doorW = (R - L) * 0.42;
+    var doorX = VP_X - doorW / 2;
+    var doorTop = T + (B - T) * 0.30;
+    root.appendChild(el('plano', [
+      'left:' + doorX + '%;top:' + doorTop + '%;',
+      'width:' + doorW + '%;height:' + (B - doorTop) + '%;',
+      'background:repeating-linear-gradient(180deg,#2A2723 0 3px,#1C1A17 3px 6px);',
+      'box-shadow:inset 0 0 0 1px rgba(226,238,247,.10);'
+    ].join('')));
+
+    // overhead cable tray running the length of the hall
+    [-1, 1].forEach(function (side) {
+      var near = VP_X + side * 9 * m.spread;
+      var far = towardVP(near, 0.88);
+      root.appendChild(quad('plano', [
+        [near, ceilY(0, 12)], [far, ceilY(0.88, 12)],
+        [far, ceilY(0.88, 12) + 0.5], [near, ceilY(0, 12) + 1.6]
+      ], 'background:rgba(226,238,247,.13);'));
+    });
+    // conduit drops feeding each rack row
+    [0.14, 0.34, 0.52].forEach(function (t) {
+      [-1, 1].forEach(function (side) {
+        var s = shrink(t);
+        var x = towardVP(VP_X + side * 30 * m.spread, t);
+        root.appendChild(el('plano', [
+          'left:' + x + '%;top:' + ceilY(t, 12) + '%;',
+          'width:' + (0.4 * s * m.spread) + '%;height:' + (7 * s) + '%;',
+          'transform:translateX(-50%);background:rgba(226,238,247,.11);'
+        ].join('')));
+      });
+    });
+
     // server racks lining the aisle, drawn as solids receding in perspective
     var bays = [[0.03, 0.2], [0.22, 0.36], [0.38, 0.5], [0.52, 0.61], [0.63, 0.71]];
 
@@ -532,7 +603,8 @@
         var x1 = towardVP(VP_X + side * lateral, d[0]);
         var x2 = towardVP(VP_X + side * lateral, d[1]);
         var f1 = floorY(d[0]), f2 = floorY(d[1]);
-        var h1 = 30 * shrink(d[0]), h2 = 30 * shrink(d[1]);
+        var s = shrink(d[0]);
+        var h1 = 30 * s, h2 = 30 * shrink(d[1]);
         var t1 = f1 - h1, t2 = f2 - h2;
 
         // cabinet body
@@ -540,13 +612,26 @@
           'background:linear-gradient(' + (side < 0 ? '90deg' : '270deg') + ',#15161A,#23262C);' +
           'box-shadow:inset 0 0 0 1px rgba(226,238,247,.07);'));
 
-        // status LEDs, a few rows per cabinet
-        var rows = 4;
-        for (var r = 0; r < rows; r++) {
+        // plinth so the cabinet stands on the slab instead of floating
+        root.appendChild(quad('plano', [
+          [x1, f1 - 1.6 * s], [x2, f2 - 1.2 * s], [x2, f2], [x1, f1]
+        ], 'background:#0D0E10;'));
+
+        // ventilated front: many thin server units stacked up the cabinet
+        var units = m.low ? 6 : 9;
+        for (var u = 0; u < units; u++) {
+          var uf = 0.08 + u * (0.86 / units);
+          var uy1 = t1 + (f1 - t1) * uf, uy2 = t2 + (f2 - t2) * uf;
+          root.appendChild(quad('plano', [
+            [x1, uy1], [x2, uy2], [x2, uy2 + 0.5 * s], [x1, uy1 + 0.7 * s]
+          ], 'background:rgba(226,238,247,.055);'));
+        }
+
+        // status LEDs, one strip per few units
+        for (var r = 0; r < 4; r++) {
           var frac = 0.16 + r * 0.2;
           var lx = x1 + (x2 - x1) * 0.5;
           var ly = (t1 + (f1 - t1) * frac + t2 + (f2 - t2) * frac) / 2;
-          var s = shrink(d[0]);
           var warm = (bi + r) % 3 === 0;
           root.appendChild(el('luminaria', [
             'left:' + lx + '%;top:' + ly + '%;',
@@ -555,6 +640,16 @@
             'background:' + (warm ? 'rgba(232,184,136,.85)' : 'rgba(140,220,190,.75)') + ';',
             'box-shadow:0 0 ' + (9 * s * S) + 'px ' + (2 * s * S) + 'px ' +
               (warm ? 'rgba(232,184,136,.55)' : 'rgba(140,220,190,.5)') + ';'
+          ].join('')));
+        }
+
+        // the cold glow the racks throw onto the slab beside them
+        if (!m.low) {
+          root.appendChild(el('charco', [
+            'left:' + ((x1 + x2) / 2) + '%;top:' + ((f1 + f2) / 2) + '%;',
+            'width:' + (12 * s * m.spread) + '%;height:' + (3 * s) + '%;',
+            'transform:translate(-50%,-50%);',
+            'background:radial-gradient(ellipse at center, rgba(140,200,220,' + (0.16 * s + 0.04) + '), transparent 72%);'
           ].join('')));
         }
       });

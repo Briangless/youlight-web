@@ -473,45 +473,9 @@
         root.appendChild(quad('plano', [[x1, edgeL], [x2, edgeR], [x2, edgeR + 7.5 * s2], [x1, edgeL + 7.5 * s1]],
           'background:linear-gradient(180deg,#2E2519,#1A140E);box-shadow:inset 0 0 0 1px rgba(242,237,228,.05);'));
 
-        // --- monitor + keyboard, anchored to the desk's own back edge and
-        //     front edge so they are always planted exactly on the desk ---
+        // warm pool where the ceiling light lands on the desk, right where
+        // the back edge meets the middle of the surface
         var backX = (dx1 + dx2) / 2, backY = (dTop1 + dTop2) / 2;
-        var edgeMidY = (edgeL + edgeR) / 2;
-        var monW = 9 * s1 * m.spread, monH = 7 * s1;
-        var monCenterY = backY - monH * 0.38;    // base overlaps the desk line, screen rises above it
-
-        root.appendChild(el('plano', [                         // screen
-          'left:' + backX + '%;top:' + monCenterY + '%;',
-          'width:' + monW + '%;height:' + monH + '%;',
-          'transform:translate(-50%,-50%);border-radius:' + (1.6 * S) + 'px;',
-          'background:linear-gradient(180deg, rgba(214,232,246,.75), rgba(126,163,196,.4));',
-          'box-shadow:0 0 ' + (18 * s1 * S) + 'px ' + (5 * s1 * S) + 'px rgba(180,210,235,.32);'
-        ].join('')));
-        root.appendChild(el('plano', [                         // screen content, top line
-          'left:' + backX + '%;top:' + (monCenterY - monH * 0.16) + '%;',
-          'width:' + (monW * 0.62) + '%;height:' + (monH * 0.08) + '%;',
-          'transform:translate(-50%,-50%);background:rgba(255,255,255,.6);'
-        ].join('')));
-        root.appendChild(el('plano', [                         // screen content, second line
-          'left:' + backX + '%;top:' + (monCenterY + monH * 0.06) + '%;',
-          'width:' + (monW * 0.42) + '%;height:' + (monH * 0.08) + '%;',
-          'transform:translate(-50%,-50%);background:rgba(255,255,255,.4);'
-        ].join('')));
-        root.appendChild(el('plano', [                         // foot, planted exactly at the screen's own base
-          'left:' + backX + '%;top:' + (monCenterY + monH / 2) + '%;',
-          'width:' + (monW * 0.3) + '%;height:' + (monH * 0.14) + '%;',
-          'transform:translate(-50%,-50%);background:#231D16;'
-        ].join('')));
-
-        var kbY = backY + (edgeMidY - backY) * 0.62;
-        root.appendChild(el('plano', [                         // keyboard, between screen and the front edge
-          'left:' + backX + '%;top:' + kbY + '%;',
-          'width:' + (monW * 0.72) + '%;height:' + (monH * 0.22) + '%;',
-          'transform:translate(-50%,-50%);border-radius:' + (1 * S) + 'px;',
-          'background:#2A2318;box-shadow:inset 0 ' + (0.6 * S) + 'px 0 rgba(255,230,195,.18);'
-        ].join('')));
-
-        // warm pool where the ceiling light lands on the desk
         root.appendChild(el('charco', [
           'left:' + backX + '%;top:' + backY + '%;',
           'width:' + (14 * s1 * m.spread) + '%;height:' + (3.6 * s1) + '%;',

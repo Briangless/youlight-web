@@ -344,10 +344,38 @@
       'background:linear-gradient(270deg,#0F0D0C,#1B1816);'));
     root.appendChild(quad('plano', [[0, 100], [L, B], [R, B], [100, 100]],
       'background:linear-gradient(180deg,#1A1613,#0E0C0B);'));
-    root.appendChild(el('plano', [
-      'left:' + L + '%;top:' + T + '%;width:' + (R - L) + '%;height:' + (B - T) + '%;',
-      'background:linear-gradient(180deg,#242019,#16130F);'
-    ].join('')));
+
+    // far wall: floor-to-ceiling glass onto the city, cool against the warm office
+    var winCount = 3, wallW = R - L, wgap = wallW * 0.035;
+    var winW = (wallW - wgap * (winCount + 1)) / winCount;
+    var buildings = m.low ? 2 : 3;
+    for (var wi = 0; wi < winCount; wi++) {
+      var wx = L + wgap + wi * (winW + wgap);
+      root.appendChild(el('plano', [
+        'left:' + wx + '%;top:' + T + '%;width:' + winW + '%;height:' + (B - T) + '%;',
+        'background:linear-gradient(180deg, rgba(120,150,175,.24) 0%, rgba(46,60,74,.30) 55%, rgba(30,26,22,.22) 100%);',
+        'box-shadow:inset 0 0 0 1px rgba(226,238,247,.12);'
+      ].join('')));
+
+      for (var bd = 0; bd < buildings; bd++) {
+        var bw = winW / buildings * 0.7;
+        var bx = wx + (winW / buildings) * bd + (winW / buildings - bw) / 2;
+        var frac = 0.26 + ((wi * 3 + bd * 5) % 5) * 0.08;
+        var bh = frac * (B - T);
+        root.appendChild(el('plano', [
+          'left:' + bx + '%;top:' + (B - bh) + '%;width:' + bw + '%;height:' + bh + '%;',
+          'background:rgba(16,22,30,.88);'
+        ].join('')));
+        if ((wi + bd) % 3 === 0) {
+          // one lit window in the skyline: the warm note surviving outside
+          root.appendChild(el('plano', [
+            'left:' + (bx + bw * 0.5) + '%;top:' + (B - bh * 0.62) + '%;',
+            'width:' + (bw * 0.24) + '%;height:' + (bh * 0.07) + '%;',
+            'transform:translate(-50%,-50%);background:rgba(240,196,140,.6);'
+          ].join('')));
+        }
+      }
+    }
 
     // suspended ceiling grid, the tell that this is an office and not a hallway
     [0.16, 0.34, 0.5, 0.64, 0.76].forEach(function (t) {
@@ -357,6 +385,39 @@
         'left:50%;top:' + ceilY(t, 0) + '%;',
         'width:' + w + '%;height:' + (0.35 * s) + '%;transform:translate(-50%,-50%);',
         'background:rgba(242,237,228,.09);'
+      ].join('')));
+    });
+
+    // --- the lighting feature: a recessed gold-trimmed channel down the
+    //     centre of the ceiling, carrying a row of round downlights. This is
+    //     the thing the scene is actually about. ---
+    var beamHalf = 7.5 * m.spread, farT = 0.94;
+    var bl0 = VP_X - beamHalf, br0 = VP_X + beamHalf;
+    var blF = towardVP(bl0, farT), brF = towardVP(br0, farT);
+    var beamY0 = ceilY(0, 0), beamYF = ceilY(farT, 0);
+    var trim = 1.3 * m.spread;
+
+    root.appendChild(quad('plano', [[bl0, beamY0], [br0, beamY0], [brF, beamYF], [blF, beamYF]],
+      'background:linear-gradient(180deg, rgba(255,226,180,.14), rgba(255,226,180,.03));'));
+    // gold lip along both edges of the channel
+    [-1, 1].forEach(function (side) {
+      var innerNear = side < 0 ? bl0 : br0;
+      var outerNear = innerNear - side * trim;
+      var innerFar = towardVP(innerNear, farT);
+      var outerFar = towardVP(outerNear, farT);
+      root.appendChild(quad('plano', [[outerNear, beamY0], [innerNear, beamY0], [innerFar, beamYF], [outerFar, beamYF]],
+        'background:linear-gradient(180deg, rgba(214,147,80,.65), rgba(214,147,80,.15));'));
+    });
+
+    // round downlights sitting inside the channel
+    [0.06, 0.24, 0.42, 0.6, 0.76, 0.9].forEach(function (t) {
+      var s = shrink(t);
+      root.appendChild(el('luminaria', [
+        'left:50%;top:' + ceilY(t, 0) + '%;',
+        'width:' + (3.4 * s * m.spread) + '%;height:' + (1.7 * s) + '%;',
+        'transform:translate(-50%,-50%);border-radius:50%;',
+        'background:radial-gradient(circle, #FFF6E8, #FFE2B4 60%, rgba(255,226,180,.2));',
+        'box-shadow:0 0 ' + (30 * s * S) + 'px ' + (9 * s * S) + 'px rgba(255,226,180,' + (0.55 * s + 0.15) + ');'
       ].join('')));
     });
 
@@ -406,13 +467,22 @@
           'background:radial-gradient(ellipse at center, rgba(255,230,190,' + (0.34 * s1 + 0.06) + '), transparent 72%);'
         ].join('')));
 
-        // chair back peeking over the divider
+        // someone at the desk: head and shoulders, visible over the low
+        // partition, the way a colleague reads over a cubicle wall
         if (bi < 3) {
+          var pcx = (x1 + x2) / 2, pcy = (p1 + p2) / 2;
           root.appendChild(el('plano', [
-            'left:' + ((x1 + x2) / 2) + '%;top:' + (((p1 + p2) / 2) - 3.5 * s1) + '%;',
-            'width:' + (4.6 * s1 * m.spread) + '%;height:' + (4.5 * s1) + '%;',
-            'transform:translate(-50%,-50%);border-radius:' + (2.5 * S) + 'px;',
-            'background:#15130F;'
+            'left:' + pcx + '%;top:' + (pcy - 1.7 * s1) + '%;',
+            'width:' + (7 * s1 * m.spread) + '%;height:' + (4.6 * s1) + '%;',
+            'transform:translate(-50%,-50%);',
+            'border-radius:' + (3.5 * S) + 'px ' + (3.5 * S) + 'px 0 0;',
+            'background:#17130F;'
+          ].join('')));
+          root.appendChild(el('plano', [
+            'left:' + pcx + '%;top:' + (pcy - 4.7 * s1) + '%;',
+            'width:' + (3.2 * s1 * m.spread) + '%;height:' + (3.2 * s1) + '%;',
+            'transform:translate(-50%,-50%);border-radius:50%;',
+            'background:#1E1712;'
           ].join('')));
         }
       });

@@ -126,10 +126,9 @@
     var tl = gsap.timeline({ delay: 0.15, defaults: { ease: 'power3.out' } });
     tl.set('.hero-title .line > span', { yPercent: 110, opacity: 0 })
       .set('.tagline-word', { opacity: 0, y: 10, filter: 'blur(6px)' })
-      .set('.hero-eyebrow, .hero-sub, .hero-actions', { opacity: 0, y: 18 })
+      .set('.hero-sub, .hero-actions', { opacity: 0, y: 18 })
       .set('.hero-stage', { opacity: 0, y: 24 })
-      .to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.6 })
-      .to('.hero-title .line > span', { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.12 }, '-=0.3')
+      .to('.hero-title .line > span', { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.12 })
       .to('.hero-stage', { opacity: 1, y: 0, duration: 1.1 }, '-=0.8')
       .to('.tagline-word', { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.08 }, '-=0.9')
       .to('.hero-sub', { opacity: 1, y: 0, duration: 0.6 }, '-=0.5')

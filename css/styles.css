@@ -1,44 +1,49 @@
 /* ==========================================================================
-   YOULIGHT — "Galería de iluminación de noche"
-   Negro cálido · luz dorada · paneles flotantes · mucho aire
+   YOULIGHT — "Cine noir, oro como joya"
+   Grafito frío · vidrio real · el dorado solo donde importa
    ========================================================================== */
 :root{
-  /* Warm blacks: never cold grey, always a little brown in the shadow */
-  --ink:        #0E0D0C;
-  --ink-2:      #131110;
-  --surface:    #1A1715;
-  --surface-2:  #221D19;
+  /* Cool graphite blacks — never warm brown, always a hair of blue-violet */
+  --ink:        #0A0A0D;
+  --ink-2:      #101014;
+  --surface:    #17171D;
+  --surface-2:  #1D1D24;
 
-  --line:       rgba(242,237,228,0.07);
-  --line-soft:  rgba(242,237,228,0.11);
+  --line:       rgba(255,255,255,0.07);
+  --line-soft:  rgba(255,255,255,0.11);
 
-  /* Gold is used as LIGHT (glow, wash, bloom) before it is ever used as a line */
+  /* Real glass: translucent white over the dark base, never a solid tint */
+  --glass-bg:        rgba(255,255,255,0.055);
+  --glass-bg-strong: rgba(255,255,255,0.09);
+  --glass-border:    rgba(255,255,255,0.12);
+  --glass-blur:      blur(22px) saturate(160%);
+
+  /* Gold is the one precious thing on the page: the logo mark, one button,
+     the tagline. It is never the ambient wash, the hover glow, or the wall. */
   --gold:       #D69350;
   --gold-soft:  #E8B888;
   --gold-light: #F4D6B2;
-  --gold-wash:  rgba(214,147,80,0.13);
 
-  /* Cool tone is reserved for the street scene only. Never a UI accent. */
+  /* Cool tone used only where light temperature is literally the subject */
   --moon:       #C6D5E2;
 
-  --cream:      #F2EDE4;
-  --cream-72:   rgba(242,237,228,0.72);
-  --cream-52:   rgba(242,237,228,0.52);
-  --cream-34:   rgba(242,237,228,0.34);
+  --cream:      #F3F3F6;
+  --cream-72:   rgba(243,243,246,0.72);
+  --cream-52:   rgba(243,243,246,0.52);
+  --cream-34:   rgba(243,243,246,0.34);
 
   --font-display: "Syne", "Trebuchet MS", sans-serif;
   --font-body:    "DM Sans", system-ui, sans-serif;
 
   --container: 1180px;
 
-  /* One radius system, softly rounded throughout */
-  --r-card: 22px;
-  --r-sm:   14px;
+  /* One radius system, disciplined: 12–16px for surfaces, pills for controls */
+  --r-card: 16px;
+  --r-sm:   12px;
   --r-pill: 999px;
 
   --shadow-soft:  0 28px 70px -28px rgba(0,0,0,.85);
   --shadow-lift:  0 38px 90px -30px rgba(0,0,0,.9);
-  --shadow-bloom: 0 0 90px -22px rgba(214,147,80,.42);
 
   --ease-out:    cubic-bezier(0.23,1,0.32,1);
   --ease-in-out: cubic-bezier(0.65,0,0.35,1);
@@ -66,6 +71,8 @@ h1,h2,h3,h4,p{ margin:0; }
 button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
 svg{ display:block; }
 
+::selection{ background: var(--gold); color:#1A1006; }
+
 :focus-visible{ outline: 2px solid var(--gold-soft); outline-offset: 3px; border-radius: 6px; }
 
 .skip-link{
@@ -75,7 +82,7 @@ svg{ display:block; }
 }
 .skip-link:focus{ left:1rem; top:1rem; }
 
-/* Very fine grain so the warm blacks read as material, not as flat #000 */
+/* Very fine grain so the graphite reads as material, not as flat #000 */
 .grain{
   position:fixed; inset:0; pointer-events:none; z-index:9999;
   opacity:.03; mix-blend-mode:overlay;
@@ -86,16 +93,6 @@ svg{ display:block; }
   max-width: var(--container);
   margin: 0 auto;
   padding: 0 clamp(1.4rem, 5vw, 2.75rem);
-}
-
-.eyebrow{
-  display:inline-block;
-  font-size: .72rem;
-  font-weight:500;
-  letter-spacing: .22em;
-  color: var(--gold-soft);
-  text-transform: uppercase;
-  margin: 0 0 1.4rem;
 }
 
 .section-title{
@@ -125,6 +122,7 @@ svg{ display:block; }
   white-space: nowrap;
   transition: transform 180ms var(--ease-out), background 260ms, border-color 260ms, box-shadow 260ms;
 }
+/* the one gold moment on the page */
 .btn-primary{
   background: linear-gradient(140deg, var(--gold-light), var(--gold));
   color: #22150A;
@@ -135,30 +133,40 @@ svg{ display:block; }
   box-shadow: 0 20px 46px -16px rgba(214,147,80,.9);
 }
 .btn-ghost{
-  background: rgba(242,237,228,.045);
-  border: 1px solid var(--line-soft);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   color: var(--cream);
 }
-.btn-ghost:hover{ background: rgba(242,237,228,.09); transform: translateY(-2px); }
+.btn-ghost:hover{ background: var(--glass-bg-strong); transform: translateY(-2px); }
 /* Press feedback: the interface must feel like it heard you */
 .btn:active{ transform: scale(.97); transition-duration: 110ms; }
 .btn-lg{ padding: 1.15rem 2.2rem; font-size: 1.05rem; }
 .header-cta{ padding: .68rem 1.25rem; font-size: .88rem; }
 
 /* ==========================================================================
-   Header
+   Header — real glass, not a dark tint pretending to be glass
    ========================================================================== */
 .site-header{
   position: fixed; inset: 0 0 auto 0; z-index: 500;
-  padding: 1.35rem 0;
-  transition: padding .45s var(--ease-out), background .45s, border-color .45s;
+  /* One constant, already-compact size — no padding animation on scroll.
+     Only the glass and the border-line arrive; the box never resizes,
+     so scrolling never triggers a layout-thrash transition. */
+  padding: .95rem 0;
+  background: rgba(255,255,255,0);
+  backdrop-filter: blur(0px) saturate(100%);
+  -webkit-backdrop-filter: blur(0px) saturate(100%);
+  transition: background .45s, border-color .45s,
+              backdrop-filter .45s, -webkit-backdrop-filter .45s;
   border-bottom: 1px solid transparent;
 }
 .site-header.is-scrolled{
-  padding: .8rem 0;
-  background: rgba(14,13,12,.72);
-  backdrop-filter: blur(18px) saturate(150%);
-  border-bottom-color: var(--line);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom-color: var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
 }
 .header-inner{
   max-width: var(--container);
@@ -175,7 +183,8 @@ svg{ display:block; }
 .brand-word-img{ height:15px; width:auto; }
 .brand-word-img-sm{ height:13px; }
 
-/* The plug icon breathes light instead of blinking like a bulb about to die */
+/* The plug icon breathes light instead of blinking like a bulb about to die.
+   This is the one place gold is allowed to glow freely: it is the logo. */
 @keyframes mark-breathe{
   0%, 100%{ filter: drop-shadow(0 0 6px rgba(214,147,80,.45)); }
   50%     { filter: drop-shadow(0 0 18px rgba(214,147,80,.85)); }
@@ -189,7 +198,7 @@ svg{ display:block; }
 }
 .main-nav a::after{
   content:""; position:absolute; left:0; right:100%; bottom:-3px; height:1px;
-  background: var(--gold-soft); transition: right .35s var(--ease-out);
+  background: var(--cream); transition: right .35s var(--ease-out);
 }
 .main-nav a:hover{ color: var(--cream); }
 .main-nav a:hover::after{ right:0; }
@@ -206,25 +215,34 @@ svg{ display:block; }
 .nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
 .nav-toggle[aria-expanded="true"] span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); }
 
-/* Open menu: frosted glass, so the page stays faintly readable behind it
-   instead of the links floating over raw content. */
+/* Open menu: real frosted glass, so the page stays faintly readable behind
+   it instead of the links floating over raw content or a flat dark tint. */
 .site-header.is-nav-open{
-  background: rgba(14,13,12,.62);
-  backdrop-filter: blur(26px) saturate(170%);
-  -webkit-backdrop-filter: blur(26px) saturate(170%);
-  border-bottom-color: var(--line);
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom-color: var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
-  .site-header.is-nav-open{ background: rgba(14,13,12,.96); }
+  .site-header.is-nav-open{ background: rgba(10,10,13,.96); }
 }
 
+/* grid-template-rows 0fr→1fr animates the reveal without ever touching
+   max-height or padding, so the drawer opens without triggering layout
+   thrash on every frame. */
 .mobile-nav{
-  display:flex; flex-direction:column; gap: 1.15rem;
-  max-height:0; overflow:hidden;
-  padding: 0 clamp(1.4rem, 5vw, 2.75rem);
-  transition: max-height .5s var(--ease-drawer), padding .5s var(--ease-drawer);
+  display:grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .5s var(--ease-drawer);
 }
-.mobile-nav.is-open{ max-height: 440px; padding: 1.5rem clamp(1.4rem,5vw,2.75rem) 2rem; }
+.mobile-nav.is-open{ grid-template-rows: 1fr; }
+.mobile-nav-inner{
+  display:flex; flex-direction:column; gap: 1.15rem;
+  overflow:hidden; min-height:0;
+  padding: 0 clamp(1.4rem, 5vw, 2.75rem);
+}
+.mobile-nav.is-open .mobile-nav-inner{ padding: 1.5rem clamp(1.4rem,5vw,2.75rem) 2rem; }
 .mobile-nav a{ font-size: 1.05rem; color: var(--cream-72); }
 .mobile-nav .btn{ margin-top:.5rem; align-self:flex-start; }
 
@@ -240,16 +258,18 @@ svg{ display:block; }
 }
 .hero-glow{ position:absolute; inset:0; z-index:0; pointer-events:none; }
 .orb{ position:absolute; border-radius:50%; filter: blur(90px); }
+/* Neutral ambience — the room's own glass and light, not a gold wash.
+   Gold stays inside the lamp on the right, where it is literally the light. */
 .orb-a{
   width:52vw; height:52vw; max-width:760px; max-height:760px;
   left:-14%; top:-16%;
-  background: radial-gradient(circle, rgba(214,147,80,.20), transparent 68%);
+  background: radial-gradient(circle, rgba(255,255,255,.09), transparent 68%);
   animation: drift-a 22s ease-in-out infinite;
 }
 .orb-b{
   width:44vw; height:44vw; max-width:620px; max-height:620px;
   right:-10%; top:22%;
-  background: radial-gradient(circle, rgba(232,184,136,.13), transparent 68%);
+  background: radial-gradient(circle, rgba(198,213,226,.07), transparent 68%);
   animation: drift-b 28s ease-in-out infinite;
 }
 @keyframes drift-a{ 0%,100%{ transform:translate(0,0);} 50%{ transform:translate(4%,5%);} }
@@ -274,8 +294,10 @@ svg{ display:block; }
 .hero-title .line{ display:block; overflow:hidden; padding-bottom:.06em; }
 .hero-title .line > span{ display:inline-block; will-change:transform; }
 
+/* The tagline is the second gold moment: solid color for emphasis, never a
+   gradient fill standing in for weight. */
 .hero-tagline{
-  font-family: var(--font-display); font-weight:700;
+  font-family: var(--font-display); font-weight:800;
   font-size: clamp(1.45rem, 2.6vw, 2.05rem);
   color: var(--gold-soft);
   margin: .1rem 0 1.5rem;
@@ -304,8 +326,8 @@ svg{ display:block; }
   position:absolute; inset:0;
   border-radius: var(--r-card);
   overflow:hidden;
-  background: linear-gradient(180deg, #17130F 0%, #100D0B 55%, #0E0D0C 100%);
-  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.05);
+  background: linear-gradient(180deg, #131318 0%, #0D0D11 55%, #0A0A0D 100%);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.06);
 }
 
 /* Two complete light washes, crossfaded when the visitor picks a tone */
@@ -352,7 +374,7 @@ svg{ display:block; }
 
 .light-cord{
   position:absolute; left:50%; top:0; width:1px; height:16%;
-  background: linear-gradient(180deg, transparent, rgba(242,237,228,.22));
+  background: linear-gradient(180deg, transparent, rgba(243,243,246,.22));
 }
 .light-fixture{
   position:absolute; left:50%; top:16%;
@@ -363,23 +385,25 @@ svg{ display:block; }
   transition: background .6s var(--ease-out), box-shadow .6s var(--ease-out);
 }
 
-/* Tone picker: floating chips that are real buttons */
+/* Tone picker: real glass chips, selection shown in neutral white — the
+   colour swatches inside carry the warm/cool meaning, the chip chrome does not */
 .float-chip{
   position:absolute; z-index:3;
   display:flex; align-items:center; gap:.7rem;
   padding: .7rem .95rem;
   border-radius: var(--r-sm);
-  background: rgba(28,24,21,.74);
-  border: 1px solid var(--line-soft);
-  backdrop-filter: blur(16px) saturate(140%);
-  box-shadow: var(--shadow-soft);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.07);
   text-align:left;
   transition: transform 180ms var(--ease-out), border-color .35s, background .35s, box-shadow .35s;
 }
 .float-chip[aria-pressed="true"]{
-  border-color: rgba(214,147,80,.5);
-  background: rgba(38,30,23,.86);
-  box-shadow: var(--shadow-soft), 0 0 26px -6px rgba(214,147,80,.5);
+  border-color: rgba(255,255,255,.32);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.1), 0 0 22px -8px rgba(255,255,255,.35);
 }
 .float-chip:active{ transform: scale(.96); transition-duration: 110ms; }
 
@@ -388,6 +412,8 @@ svg{ display:block; }
 @keyframes chip-float-a{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-9px);} }
 @keyframes chip-float-b{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(8px);} }
 
+/* Swatches carry the real product information (2700K / 6500K) — functional
+   colour, not brand decoration, so they stay exactly what they represent */
 .chip-swatch{ width:26px; height:26px; border-radius:50%; flex:none; }
 .chip-warm{ background: radial-gradient(circle at 35% 32%, #FFE9C8, #D68A3E); box-shadow: 0 0 18px 3px rgba(214,138,62,.55); }
 .chip-cool{ background: radial-gradient(circle at 35% 32%, #FFFFFF, #B9CEDD); box-shadow: 0 0 18px 3px rgba(185,206,221,.4); }
@@ -398,7 +424,7 @@ svg{ display:block; }
 /* ==========================================================================
    Marcas: el muro que se enciende
    (echo of the real product wall in the shop: each brand is a plate that
-    switches on, one after another, the way a showroom wall wakes up)
+    switches on, one after another, in clean white light — not amber)
    ========================================================================== */
 .marcas{ padding: clamp(5rem,10vw,8rem) 0; }
 .marcas-head{ margin-bottom: clamp(2.5rem,5vw,3.5rem); }
@@ -417,18 +443,20 @@ svg{ display:block; }
   padding: 1.4rem 1rem;
   text-align:center;
   border-radius: var(--r-sm);
-  border: 1px solid var(--line);
-  background: linear-gradient(180deg, #171412, #121010);
-  transition: border-color .5s var(--ease-out), transform .5s var(--ease-out);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  transition: border-color .5s var(--ease-out), transform .5s var(--ease-out), background .5s var(--ease-out);
 }
 .placa-ancha{ grid-column: span 2; }
 .placa-full{ grid-column: 1 / -1; min-height: 96px; align-items:center; justify-content:center; }
 
-/* the light bar sitting at the top of each plate */
+/* the light bar sitting at the top of each plate — clean white, not amber */
 .placa-luz{
   position:absolute; top:0; left:14%; right:14%; height:3px;
   border-radius: 0 0 var(--r-pill) var(--r-pill);
-  background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+  background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
   opacity:0; transform: scaleX(.3);
   transition: opacity .5s var(--ease-out), transform .7s var(--ease-out);
 }
@@ -436,7 +464,7 @@ svg{ display:block; }
 .placa::before{
   content:""; position:absolute; left:50%; top:-55%;
   width:130%; height:110%; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center, rgba(214,147,80,.30), transparent 66%);
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.10), transparent 66%);
   opacity:0; transition: opacity .6s var(--ease-out); pointer-events:none;
 }
 .placa-nombre{
@@ -452,7 +480,7 @@ svg{ display:block; }
 .placa-mas .placa-nombre{ font-family: var(--font-body); font-weight:500; font-size:1rem; letter-spacing:.1em; }
 
 /* lit: applied in sequence by JS as the wall scrolls into view */
-.placa.is-lit{ border-color: rgba(214,147,80,.2); }
+.placa.is-lit{ border-color: rgba(255,255,255,.18); background: var(--glass-bg-strong); }
 .placa.is-lit .placa-luz{ opacity:.85; transform: scaleX(1); }
 .placa.is-lit::before{ opacity:.55; }
 .placa.is-lit .placa-nombre{ color: var(--cream-72); }
@@ -491,7 +519,7 @@ svg{ display:block; }
 .nosotros::before{
   content:""; position:absolute; left:50%; top:0;
   width:min(900px,110vw); height:420px; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center top, var(--gold-wash), transparent 70%);
+  background: radial-gradient(ellipse at center top, rgba(255,255,255,.05), transparent 70%);
   pointer-events:none;
 }
 .nosotros-grid{
@@ -504,6 +532,7 @@ svg{ display:block; }
   font-size: clamp(2rem, 3.5vw, 2.85rem); line-height:1.14;
 }
 .nosotros-body p{ font-size:1.05rem; color:var(--cream-72); margin-bottom:1.3rem; max-width:54ch; }
+/* the tagline returns once, small and gold — the second and last time it does */
 .nosotros-signoff{
   font-family: var(--font-display); font-weight:700; font-size:1.55rem;
   color: var(--gold-soft); margin-top:2rem !important;
@@ -547,28 +576,23 @@ svg{ display:block; }
 }
 .haz{ position:absolute; filter: blur(10px); pointer-events:none; }
 .charco{ position:absolute; border-radius:50%; filter: blur(12px); pointer-events:none; }
-.poste{ position:absolute; background: linear-gradient(180deg, #22201E, #14120F); border-radius:2px; }
+.poste{ position:absolute; background: linear-gradient(180deg, #221F24, #131217); border-radius:2px; }
 
 /* Vignette keeps the eye in the middle of the frame */
 .escena-vineta{
   position:absolute; inset:0; pointer-events:none;
-  background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 40%, rgba(8,7,7,.72) 100%);
+  background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 40%, rgba(6,6,8,.72) 100%);
 }
-/* Scrim behind the caption so type always stays readable over any photo */
 /* Darkens whatever the scene is doing so the caption reads on top of any
    composition, not just the ones that happen to leave the centre empty. */
 .escena-scrim{
   position:absolute; inset:0; pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 46% at 50% 50%, rgba(8,7,6,.55), transparent 72%),
-    linear-gradient(180deg, rgba(10,9,8,.6) 0%, rgba(10,9,8,.34) 30%, rgba(10,9,8,.4) 55%, rgba(10,9,8,.78) 100%);
+    radial-gradient(ellipse 70% 46% at 50% 50%, rgba(6,6,8,.55), transparent 72%),
+    linear-gradient(180deg, rgba(8,8,10,.6) 0%, rgba(8,8,10,.34) 30%, rgba(8,8,10,.4) 55%, rgba(8,8,10,.78) 100%);
 }
 
 .recorrido-overlay{ position:absolute; inset:0; z-index:2; text-align:center; pointer-events:none; }
-.recorrido-eyebrow{
-  position:absolute; top: clamp(6rem, 14%, 8rem); left:50%; transform:translateX(-50%);
-  white-space:nowrap; margin:0;
-}
 .recorrido-caption{
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   width:min(90vw,600px); padding: 0 1rem;
@@ -579,17 +603,17 @@ svg{ display:block; }
 .recorrido-caption h3{
   font-family: var(--font-display); font-weight:700;
   font-size: clamp(2rem, 4.2vw, 3.1rem); line-height:1.08; margin-bottom:.7rem;
-  text-shadow: 0 2px 40px rgba(8,7,7,.85);
+  text-shadow: 0 2px 40px rgba(6,6,8,.85);
 }
-.recorrido-caption p{ color: var(--cream-72); font-size:1.06rem; text-shadow: 0 2px 26px rgba(8,7,7,.85); }
+.recorrido-caption p{ color: var(--cream-72); font-size:1.06rem; text-shadow: 0 2px 26px rgba(6,6,8,.85); }
 
 .recorrido-progress{
   position:absolute; left:0; right:0; bottom:0; height:2px; z-index:3;
-  background: rgba(242,237,228,.07);
+  background: rgba(255,255,255,.07);
 }
 .recorrido-progress span{
   display:block; height:100%; width:0%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  background: linear-gradient(90deg, rgba(255,255,255,.55), #FFFFFF);
 }
 
 /* Static stack: reduced motion, or no JS. Every scene simply stands still. */
@@ -600,7 +624,6 @@ svg{ display:block; }
   height:44vh; min-height:280px; border-radius: var(--r-card); overflow:hidden;
 }
 .es-estatico .recorrido-overlay{ position:static; inset:auto; }
-.es-estatico .recorrido-eyebrow{ position:static; transform:none; display:block; margin-bottom:2rem; }
 .es-estatico .recorrido-caption{
   position:static; transform:none; opacity:1; filter:none; width:100%;
   padding: 1.5rem 1.25rem 2.5rem;
@@ -608,7 +631,7 @@ svg{ display:block; }
 .es-estatico .recorrido-progress{ display:none; }
 
 /* ==========================================================================
-   Qué manejamos
+   Qué manejamos — glass cards over the page's own ambient light
    ========================================================================== */
 .productos{ padding: clamp(6rem,12vw,10rem) 0; }
 .productos-head{ margin-bottom: clamp(3rem,6vw,4.5rem); }
@@ -617,24 +640,28 @@ svg{ display:block; }
 .prod-card{
   position:relative; overflow:hidden;
   grid-column: span 2;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
   border-radius: var(--r-card);
   padding: 2.1rem 1.9rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
   transition: transform .5s var(--ease-out), border-color .5s, background .5s, box-shadow .5s;
 }
-/* a warm light source waking up behind the card on hover */
+/* a cool sheen waking up behind the card on hover — glass catching light,
+   not a gold wash. Gold stays reserved for the logo and the CTA. */
 .prod-card::before{
   content:""; position:absolute; left:50%; top:-40%;
   width:120%; height:100%; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center, var(--gold-wash), transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(255,255,255,.08), transparent 70%);
   opacity:0; transition: opacity .55s var(--ease-out); pointer-events:none;
 }
 .prod-card:hover{
   transform: translateY(-6px);
-  border-color: rgba(214,147,80,.28);
-  background: var(--surface-2);
-  box-shadow: var(--shadow-lift);
+  border-color: rgba(255,255,255,.22);
+  background: var(--glass-bg-strong);
+  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,.09);
 }
 .prod-card:hover::before{ opacity:1; }
 
@@ -672,22 +699,23 @@ svg{ display:block; }
 .map-scene{
   position:relative; width:100%; height:100%;
   border-radius: var(--r-card); overflow:hidden;
-  background:
-    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(214,147,80,.16), transparent 70%),
-    linear-gradient(180deg, var(--surface-2), var(--surface));
-  border:1px solid var(--line);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border:1px solid var(--glass-border);
   display:flex; align-items:center; justify-content:center;
-  box-shadow: var(--shadow-soft);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.06);
 }
 /* Street croquis: the real diagonal grid around the shop, lines only */
 .map-croquis{ position:absolute; inset:0; width:100%; height:100%; }
-.croquis-calles line{ stroke: rgba(242,237,228,.13); stroke-width: 3.5; }
-.croquis-avenida line{ stroke: rgba(242,237,228,.22); stroke-width: 7; }
-.croquis-parque{ fill: rgba(150,190,150,.10); }
+.croquis-calles line{ stroke: rgba(255,255,255,.11); stroke-width: 3.5; }
+.croquis-avenida line{ stroke: rgba(255,255,255,.19); stroke-width: 7; }
+.croquis-parque{ fill: rgba(150,190,150,.09); }
 
+/* The pin is the third and last gold moment: one precise mark, "you are here" */
 .map-pin{ position:relative; z-index:2; color:var(--gold-light); filter: drop-shadow(0 0 20px rgba(214,147,80,.8)); }
 .map-ring{
-  position:absolute; border-radius:50%; border:1px solid rgba(214,147,80,.28);
+  position:absolute; border-radius:50%; border:1px solid rgba(255,255,255,.16);
   animation: ring-pulse 4s var(--ease-out) infinite;
 }
 .map-ring-a{ width:130px; height:130px; }
@@ -700,7 +728,7 @@ svg{ display:block; }
 .contacto{ position:relative; padding: clamp(7rem,14vw,11rem) 0; overflow:hidden; text-align:center; }
 .contacto-glow{
   position:absolute; inset:auto 0 -35% 0; height:80%; pointer-events:none;
-  background: radial-gradient(ellipse 55% 100% at 50% 100%, rgba(214,147,80,.22), transparent 70%);
+  background: radial-gradient(ellipse 55% 100% at 50% 100%, rgba(255,255,255,.08), transparent 70%);
 }
 .contacto-inner{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; }
 .contacto-title{
@@ -713,15 +741,19 @@ svg{ display:block; }
 .social-link{
   display:inline-flex; align-items:center; gap:.6rem;
   font-size:.95rem; color: var(--cream-72);
-  border:1px solid var(--line-soft); border-radius: var(--r-pill);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border:1px solid var(--glass-border); border-radius: var(--r-pill);
   padding:.7rem 1.3rem;
   transition: color .3s var(--ease-out), border-color .3s var(--ease-out), background .3s var(--ease-out), transform 180ms var(--ease-out);
 }
-.social-link svg{ color: var(--gold-soft); transition: color .3s var(--ease-out); }
+.social-link svg{ color: var(--cream-72); transition: color .3s var(--ease-out); }
 .social-link:hover{
-  color: var(--cream); border-color: rgba(214,147,80,.45);
-  background: rgba(214,147,80,.08); transform: translateY(-2px);
+  color: var(--cream); border-color: rgba(255,255,255,.24);
+  background: var(--glass-bg-strong); transform: translateY(-2px);
 }
+.social-link:hover svg{ color: var(--cream); }
 .social-link:active{ transform: scale(.97); transition-duration: 110ms; }
 
 /* ==========================================================================
@@ -738,14 +770,14 @@ svg{ display:block; }
 .footer-nav a{ font-size:.9rem; color:var(--cream-72); transition: color .25s; }
 .footer-nav a:hover{ color:var(--cream); }
 .footer-meta{ color:var(--cream-52); font-size:.88rem; line-height:1.8; }
-.footer-meta a:hover{ color:var(--gold-soft); }
+.footer-meta a:hover{ color:var(--cream); }
 .footer-copy{ color:var(--cream-34); font-size:.8rem; margin-top:.8rem; }
 
 /* ==========================================================================
    Responsive
    ========================================================================== */
 @media (hover: hover) and (pointer: fine){
-  .placa:hover{ transform: translateY(-3px); border-color: rgba(214,147,80,.42); }
+  .placa:hover{ transform: translateY(-3px); border-color: rgba(255,255,255,.24); background: var(--glass-bg-strong); }
   .placa:hover .placa-luz{ opacity:1; transform: scaleX(1); }
   .placa:hover::before{ opacity:1; }
   .placa:hover .placa-nombre{ color: var(--cream); }

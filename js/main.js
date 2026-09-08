@@ -7,7 +7,6 @@
     var yearEl = document.getElementById('year');
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    setupHeader();
     setupHeaderTheme();
     setupMobileNav();
     setupTonePicker();
@@ -21,34 +20,35 @@
     }
   }
 
-  function setupHeader() {
-    var header = document.getElementById('site-header');
-    if (!header) return;
-    var onScroll = function () {
-      header.classList.toggle('is-scrolled', window.scrollY > 40);
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
-
   // The header floats over both dark and paper sections, so it needs to know
   // which one is currently behind it and flip [data-bg] to match — otherwise
   // white nav text disappears the moment a light section scrolls underneath.
+  // The same scroll position also drives which nav pill is marked current.
   function setupHeaderTheme() {
     var header = document.getElementById('site-header');
     var sections = Array.prototype.slice.call(document.querySelectorAll('main > section[data-theme]'));
     if (!header || !sections.length || !('IntersectionObserver' in window)) return;
 
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('.main-nav a'));
     var headerH = header.offsetHeight || 72;
-    var apply = function (theme) {
+
+    var applyTheme = function (theme) {
       if (theme === 'light') header.dataset.bg = 'light';
       else delete header.dataset.bg;
+    };
+    var applyActive = function (id) {
+      navLinks.forEach(function (a) {
+        a.classList.toggle('is-active', a.getAttribute('href') === '#' + id);
+      });
     };
 
     var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) apply(entry.target.dataset.theme);
+          if (entry.isIntersecting) {
+            applyTheme(entry.target.dataset.theme);
+            applyActive(entry.target.id);
+          }
         });
       },
       { rootMargin: '-' + headerH + 'px 0px -70% 0px', threshold: 0 }
@@ -104,12 +104,9 @@
     var nav = document.getElementById('mobile-nav');
     if (!toggle || !nav) return;
 
-    var header = document.getElementById('site-header');
-
     var setOpen = function (open) {
       toggle.setAttribute('aria-expanded', String(open));
       nav.classList.toggle('is-open', open);
-      if (header) header.classList.toggle('is-nav-open', open);
       nav.inert = !open; // keep collapsed links out of tab order / AT
     };
 

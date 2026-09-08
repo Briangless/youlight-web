@@ -6,11 +6,13 @@
    ========================================================================== */
 :root{
   /* Cool graphite blacks — never warm brown, always a hair of blue-violet.
+     Kept off pure black on purpose: full black next to the paper sections
+     read as too hard a jump, so this sits a few steps lighter.
      Used by: hero, recorrido, contacto/footer. */
-  --ink:        #0A0A0D;
-  --ink-2:      #101014;
-  --surface:    #17171D;
-  --surface-2:  #1D1D24;
+  --ink:        #16161C;
+  --ink-2:      #1C1C23;
+  --surface:    #222229;
+  --surface-2:  #2A2A32;
 
   --line:       rgba(255,255,255,0.07);
   --line-soft:  rgba(255,255,255,0.11);
@@ -63,7 +65,7 @@
   --r-card:  20px;
   --r-sm:    12px;
   --r-pill:  999px;
-  --r-scoop: clamp(1.6rem, 4vw, 2.75rem);
+  --r-scoop: clamp(2.25rem, 7vw, 3.5rem);
 
   --shadow-soft:  0 28px 70px -28px rgba(0,0,0,.85);
   --shadow-lift:  0 38px 90px -30px rgba(0,0,0,.9);
@@ -166,71 +168,66 @@ svg{ display:block; }
 /* Press feedback: the interface must feel like it heard you */
 .btn:active{ transform: scale(.97); transition-duration: 110ms; }
 .btn-lg{ padding: 1.15rem 2.2rem; font-size: 1.05rem; }
-.header-cta{ padding: .68rem 1.25rem; font-size: .88rem; }
-
 /* ==========================================================================
-   Header — real glass that stays readable over BOTH the dark and the paper
-   sections. It never goes fully transparent: even at the very top, over the
-   hero, it carries a faint dark glass so white text always has a floor to
-   sit on. When the page underneath turns to paper, main.js flips
-   [data-bg="light"] and the whole header — text, logo, toggle, CTA — swaps
-   to a light glass with ink text, so it never washes out against white.
+   Header — no bar. Three small floating pieces (logo, nav pill, action
+   circles), each carrying its own glass, the way a badge sits on a jacket
+   rather than a sash across the chest. Nothing here goes fully transparent:
+   every chip keeps a border + shadow, so it reads as an object even when
+   its background tint is close to the page behind it. main.js watches
+   which section is behind the header and flips [data-bg="light"] — every
+   chip below reads its colour from these two custom-property sets, so the
+   whole header repaints in one place instead of a rule per element.
    ========================================================================== */
 .site-header{
   position: fixed; inset: 0 0 auto 0; z-index: 500;
-  /* One constant, already-compact size — no padding animation on scroll.
-     Only the glass and the border-line intensify; the box never resizes,
-     so scrolling never triggers a layout-thrash transition. */
-  padding: .95rem 0;
-  background: rgba(10,10,13,.32);
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  color: var(--cream);
-  transition: background .4s var(--ease-out), border-color .4s var(--ease-out),
-              box-shadow .4s var(--ease-out), color .4s var(--ease-out);
+  padding: 1.15rem clamp(1.2rem, 4vw, 2rem);
+
+  --chip-bg:        rgba(18,18,23,.5);
+  --chip-bg-strong: rgba(18,18,23,.74);
+  --chip-border:    rgba(255,255,255,.16);
+  --chip-ink:       var(--cream);
+  --chip-ink-72:    var(--cream-72);
+  --chip-active-bg: var(--cream);
+  --chip-active-ink:var(--ink);
+  --scrim: rgba(10,10,13,.4);
+
+  transition: color .4s var(--ease-out);
 }
-.site-header.is-scrolled{
-  background: var(--glass-bg-strong);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom-color: var(--glass-border);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 20px 40px -28px rgba(0,0,0,.6);
+/* A soft fade, not a bar: without it, headline text scrolling past behind
+   the header shows straight through the gaps between the floating chips.
+   This knocks it back just enough to keep the chips legible, fading to
+   nothing a little past the row so it never reads as a hard-edged strip. */
+.site-header::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:180%;
+  background: linear-gradient(to bottom, var(--scrim) 0%, transparent 100%);
+  pointer-events:none; z-index:-1;
+  transition: background .4s var(--ease-out);
+}
+.site-header[data-bg="light"]{
+  --chip-bg:        rgba(255,255,255,.58);
+  --chip-bg-strong: rgba(255,255,255,.82);
+  --chip-border:    rgba(19,19,24,.14);
+  --chip-ink:       var(--paper-ink);
+  --chip-ink-72:    var(--paper-ink-72);
+  --chip-active-bg: var(--paper-ink);
+  --chip-active-ink:var(--paper);
+  --scrim: rgba(255,255,255,.55);
 }
 
-/* The header floating over a paper section: light glass, ink text. */
-.site-header[data-bg="light"]{
-  background: rgba(244,245,247,.78);
-  border-bottom-color: var(--paper-line-strong);
-  color: var(--paper-ink);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 20px 40px -30px rgba(10,10,20,.28);
-}
-.site-header[data-bg="light"].is-scrolled{
-  background: rgba(244,245,247,.9);
-}
-.site-header[data-bg="light"] .brand-word-img{ filter: brightness(0); }
-.site-header[data-bg="light"] .main-nav a{ color: var(--paper-ink-72); }
-.site-header[data-bg="light"] .main-nav a:hover{ color: var(--paper-ink); }
-.site-header[data-bg="light"] .main-nav a::after{ background: var(--paper-ink); }
-.site-header[data-bg="light"] .nav-toggle span{ background: var(--paper-ink); }
-.site-header[data-bg="light"] .header-cta.btn-ghost{
-  background: rgba(19,19,24,.05); border-color: var(--paper-line-strong); color: var(--paper-ink);
-}
-.site-header[data-bg="light"] .header-cta.btn-ghost:hover{ background: rgba(19,19,24,.09); }
 .header-inner{
-  max-width: var(--container);
-  margin: 0 auto;
-  padding: 0 clamp(1.4rem, 5vw, 2.75rem);
-  display:flex; align-items:center; gap: 1.5rem;
+  max-width: var(--container); margin: 0 auto;
+  display:grid; grid-template-columns: 1fr auto 1fr;
+  align-items:center; gap: 1rem;
 }
-.brand{ display:flex; align-items:center; gap:.7rem; margin-right:auto; }
+.brand{ display:flex; align-items:center; gap:.65rem; justify-self:start; }
 .brand-mark{
   width:32px; height:32px; object-fit:contain;
   animation: mark-breathe 4.5s ease-in-out infinite;
 }
 .brand-mark-sm{ width:26px; height:26px; }
-.brand-word-img{ height:15px; width:auto; }
+.brand-word-img{ height:15px; width:auto; transition: filter .4s var(--ease-out); }
 .brand-word-img-sm{ height:13px; }
+.site-header[data-bg="light"] .brand-word-img{ filter: brightness(0); }
 
 /* The plug icon breathes light instead of blinking like a bulb about to die.
    This is the one place gold is allowed to glow freely: it is the logo. */
@@ -239,69 +236,93 @@ svg{ display:block; }
   50%     { filter: drop-shadow(0 0 18px rgba(214,147,80,.85)); }
 }
 
-.main-nav{ display:flex; align-items:center; gap:2.2rem; }
+/* The nav pill: a self-contained capsule, so it stays a legible object no
+   matter what colour is behind it — the definition comes from its own
+   border + shadow, not from contrast with the page. Uppercase + tracked
+   letters give it a distinct, more graphic voice than the body copy, the
+   same way a display face and a utility face split duties without either
+   one needing to be a script/cursive letterform this brand has no use for. */
+.main-nav{
+  justify-self:center;
+  display:flex; align-items:center; gap:.15rem;
+  padding:.3rem;
+  border-radius: var(--r-pill);
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 14px 34px -20px rgba(0,0,0,.55);
+  transition: background .4s var(--ease-out), border-color .4s var(--ease-out);
+}
 .main-nav a{
-  font-size:.9rem; color: var(--cream-72);
-  position:relative; padding:.2rem 0;
-  transition: color .25s var(--ease-out);
+  font-size:.74rem; font-weight:600;
+  text-transform: uppercase; letter-spacing:.08em;
+  padding:.62rem 1.05rem;
+  border-radius: var(--r-pill);
+  color: var(--chip-ink-72);
+  transition: color .3s var(--ease-out), background .3s var(--ease-out);
 }
-.main-nav a::after{
-  content:""; position:absolute; left:0; right:100%; bottom:-3px; height:1px;
-  background: var(--cream); transition: right .35s var(--ease-out);
-}
-.main-nav a:hover{ color: var(--cream); }
-.main-nav a:hover::after{ right:0; }
+.main-nav a:hover{ color: var(--chip-ink); }
+.main-nav a.is-active{ background: var(--chip-active-bg); color: var(--chip-active-ink); }
 
-.nav-toggle{
-  display:none; flex-direction:column; justify-content:center; gap:5px;
-  width:40px; height:40px;
+.header-actions{ display:flex; align-items:center; gap:.5rem; justify-self:end; }
+.icon-btn{
+  display:grid; place-items:center; flex:none;
+  width:2.75rem; height:2.75rem;
+  border-radius:50%;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  color: var(--chip-ink);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: 0 14px 34px -20px rgba(0,0,0,.55);
+  transition: background .3s var(--ease-out), border-color .4s var(--ease-out),
+              color .4s var(--ease-out), transform 180ms var(--ease-out);
 }
+.icon-btn:hover{ background: var(--chip-bg-strong); }
+.icon-btn:active{ transform: scale(.92); transition-duration: 110ms; }
+.icon-btn svg{ width:1.15rem; height:1.15rem; }
+
+.nav-toggle{ display:none; flex-direction:column; justify-content:center; gap:5px; }
 .nav-toggle span{
-  width:20px; height:1.5px; background:var(--cream); margin:0 auto; border-radius:2px;
+  width:18px; height:1.5px; background: currentColor; margin:0 auto; border-radius:2px;
   transition: transform .35s var(--ease-out), opacity .25s;
 }
 .nav-toggle[aria-expanded="true"] span:nth-child(1){ transform: translateY(6.5px) rotate(45deg); }
 .nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
 .nav-toggle[aria-expanded="true"] span:nth-child(3){ transform: translateY(-6.5px) rotate(-45deg); }
 
-/* Open menu: real frosted glass, so the page stays faintly readable behind
-   it instead of the links floating over raw content or a flat dark tint.
-   The drawer's own links are always light-on-dark, so the open state
-   always wins back to the dark variant even if [data-bg="light"] is set. */
-.site-header.is-nav-open,
-.site-header.is-nav-open[data-bg="light"]{
-  background: var(--glass-bg-strong);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border-bottom-color: var(--glass-border);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-  color: var(--cream);
-}
-.site-header.is-nav-open[data-bg="light"] .brand-word-img{ filter: none; }
-.site-header.is-nav-open[data-bg="light"] .main-nav a{ color: var(--cream-72); }
-.site-header.is-nav-open[data-bg="light"] .main-nav a::after{ background: var(--cream); }
-.site-header.is-nav-open[data-bg="light"] .nav-toggle span{ background: var(--cream); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
-  .site-header.is-nav-open{ background: rgba(10,10,13,.96); }
+@media (max-width: 980px){
+  .main-nav{ display:none; }
+  .nav-toggle{ display:flex; }
 }
 
-/* grid-template-rows 0fr→1fr animates the reveal without ever touching
-   max-height or padding, so the drawer opens without triggering layout
-   thrash on every frame. */
+/* Mobile menu: its own floating rounded panel below the header row, always
+   a fixed dark glass — it doesn't need to adapt to the section behind it
+   because it always sits on top of the page, never blended into it. */
 .mobile-nav{
   display:grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows .5s var(--ease-drawer);
+  margin-top: .6rem;
 }
 .mobile-nav.is-open{ grid-template-rows: 1fr; }
 .mobile-nav-inner{
   display:flex; flex-direction:column; gap: 1.15rem;
   overflow:hidden; min-height:0;
-  padding: 0 clamp(1.4rem, 5vw, 2.75rem);
+  border-radius: var(--r-card);
+  background: rgba(18,18,23,.88);
+  border: 1px solid rgba(255,255,255,.14);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-soft);
 }
-.mobile-nav.is-open .mobile-nav-inner{ padding: 1.5rem clamp(1.4rem,5vw,2.75rem) 2rem; }
+.mobile-nav.is-open .mobile-nav-inner{ padding: 1.5rem 1.5rem 1.75rem; }
 .mobile-nav a{ font-size: 1.05rem; color: var(--cream-72); }
 .mobile-nav .btn{ margin-top:.5rem; align-self:flex-start; }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+  .mobile-nav-inner{ background: rgba(18,18,23,.97); }
+}
 
 /* ==========================================================================
    Hero — dark. The night showroom the whole site opens from.
@@ -804,9 +825,6 @@ svg{ display:block; }
    Responsive
    ========================================================================== */
 @media (max-width: 980px){
-  .main-nav, .header-cta{ display:none; }
-  .nav-toggle{ display:flex; }
-
   .hero{ padding-top: 7.5rem; }
   .hero-inner{ grid-template-columns:1fr; gap:3.5rem; }
   .hero-copy{ align-items:center; text-align:center; }

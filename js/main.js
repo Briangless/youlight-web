@@ -8,8 +8,10 @@
     if (yearEl) yearEl.textContent = new Date().getFullYear();
 
     setupHeader();
+    setupHeaderTheme();
     setupMobileNav();
     setupTonePicker();
+    setupHeroTilt();
     setupAnchorScroll();
 
     if (window.gsap && window.ScrollTrigger) {
@@ -27,6 +29,74 @@
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  // The header floats over both dark and paper sections, so it needs to know
+  // which one is currently behind it and flip [data-bg] to match — otherwise
+  // white nav text disappears the moment a light section scrolls underneath.
+  function setupHeaderTheme() {
+    var header = document.getElementById('site-header');
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main > section[data-theme]'));
+    if (!header || !sections.length || !('IntersectionObserver' in window)) return;
+
+    var headerH = header.offsetHeight || 72;
+    var apply = function (theme) {
+      if (theme === 'light') header.dataset.bg = 'light';
+      else delete header.dataset.bg;
+    };
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) apply(entry.target.dataset.theme);
+        });
+      },
+      { rootMargin: '-' + headerH + 'px 0px -70% 0px', threshold: 0 }
+    );
+
+    sections.forEach(function (s) { observer.observe(s); });
+  }
+
+  // Tilts the hero's light panel toward the cursor, like it's a physical
+  // object catching the light — a real 3D read without needing a 3D asset.
+  // Desktop-only (fine pointer + hover) and off under reduced motion.
+  function setupHeroTilt() {
+    var stage = document.getElementById('hero-stage');
+    var panel = stage && stage.querySelector('.light-panel');
+    if (!stage || !panel) return;
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var current = { x: 0, y: 0 };
+    var target = { x: 0, y: 0 };
+    var raf = null;
+
+    function tick() {
+      current.x += (target.x - current.x) * 0.12;
+      current.y += (target.y - current.y) * 0.12;
+      panel.style.transform = 'rotateX(' + current.y.toFixed(2) + 'deg) rotateY(' + current.x.toFixed(2) + 'deg)';
+      if (Math.abs(target.x - current.x) > 0.02 || Math.abs(target.y - current.y) > 0.02) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        raf = null;
+      }
+    }
+
+    var kick = function () { if (!raf) raf = requestAnimationFrame(tick); };
+
+    stage.addEventListener('pointermove', function (e) {
+      var r = stage.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      target.x = px * 14;
+      target.y = -py * 11;
+      kick();
+    });
+
+    stage.addEventListener('pointerleave', function () {
+      target.x = 0; target.y = 0;
+      kick();
+    });
   }
 
   function setupMobileNav() {

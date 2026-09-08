@@ -104,6 +104,7 @@
 
     inner.appendChild(arte);
     inner.appendChild(foto);
+    inner.appendChild(el('escena-brillo'));
     inner.appendChild(el('escena-vineta'));
     inner.appendChild(el('escena-scrim'));
     node.appendChild(inner);

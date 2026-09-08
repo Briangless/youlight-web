@@ -608,18 +608,29 @@ svg{ display:block; }
 .charco{ position:absolute; border-radius:50%; filter: blur(12px); pointer-events:none; }
 .poste{ position:absolute; background: linear-gradient(180deg, #221F24, #131217); border-radius:2px; }
 
+/* A warm wash lifted with screen blending — the only way to actually raise
+   near-black pixels, since a plain brightness() filter multiplies zero by
+   anything and stays zero. Sits under the vignette/scrim so the middle of
+   each room reads brighter without flattening the edges they still need
+   for the caption to stay legible. */
+.escena-brillo{
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse 78% 62% at 50% 46%, rgba(255,238,214,.22), rgba(255,238,214,.08) 55%, transparent 82%);
+  mix-blend-mode: screen;
+}
+
 /* Vignette keeps the eye in the middle of the frame */
 .escena-vineta{
   position:absolute; inset:0; pointer-events:none;
-  background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 40%, rgba(6,6,8,.72) 100%);
+  background: radial-gradient(ellipse 75% 65% at 50% 50%, transparent 45%, rgba(10,9,10,.5) 100%);
 }
 /* Darkens whatever the scene is doing so the caption reads on top of any
    composition, not just the ones that happen to leave the centre empty. */
 .escena-scrim{
   position:absolute; inset:0; pointer-events:none;
   background:
-    radial-gradient(ellipse 70% 46% at 50% 50%, rgba(6,6,8,.55), transparent 72%),
-    linear-gradient(180deg, rgba(8,8,10,.6) 0%, rgba(8,8,10,.34) 30%, rgba(8,8,10,.4) 55%, rgba(8,8,10,.78) 100%);
+    radial-gradient(ellipse 70% 46% at 50% 50%, rgba(10,9,10,.38), transparent 72%),
+    linear-gradient(180deg, rgba(12,11,13,.42) 0%, rgba(12,11,13,.2) 30%, rgba(12,11,13,.26) 55%, rgba(12,11,13,.58) 100%);
 }
 
 .recorrido-overlay{ position:absolute; inset:0; z-index:2; text-align:center; pointer-events:none; }

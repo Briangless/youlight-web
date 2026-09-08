@@ -1,9 +1,12 @@
 /* ==========================================================================
-   YOULIGHT — "Cine noir, oro como joya"
-   Grafito frío · vidrio real · el dorado solo donde importa
+   YOULIGHT — "Cine noir, oro como joya" + ritmo claro/oscuro
+   Grafito frío en las escenas de luz · papel frío donde se lee · el dorado
+   solo donde importa. El sitio alterna oscuro-claro-claro-oscuro-claro-
+   claro-oscuro a propósito: la vida viene del ritmo, no de un solo tono.
    ========================================================================== */
 :root{
-  /* Cool graphite blacks — never warm brown, always a hair of blue-violet */
+  /* Cool graphite blacks — never warm brown, always a hair of blue-violet.
+     Used by: hero, recorrido, contacto/footer. */
   --ink:        #0A0A0D;
   --ink-2:      #101014;
   --surface:    #17171D;
@@ -12,17 +15,22 @@
   --line:       rgba(255,255,255,0.07);
   --line-soft:  rgba(255,255,255,0.11);
 
-  /* Real glass: translucent white over the dark base, never a solid tint */
+  /* Real glass: translucent white over the dark base, never a solid tint.
+     Only used where something floats over a photo or another surface
+     (header, mobile menu, the hero's light-demo chips) — never as a
+     stand-in for a plain card on a page that is already dark. */
   --glass-bg:        rgba(255,255,255,0.055);
   --glass-bg-strong: rgba(255,255,255,0.09);
   --glass-border:    rgba(255,255,255,0.12);
   --glass-blur:      blur(22px) saturate(160%);
 
   /* Gold is the one precious thing on the page: the logo mark, one button,
-     the tagline. It is never the ambient wash, the hover glow, or the wall. */
+     the tagline, the map pin. It is never the ambient wash, the hover glow,
+     or a repeated card treatment. */
   --gold:       #D69350;
   --gold-soft:  #E8B888;
   --gold-light: #F4D6B2;
+  --gold-deep:  #A9702F; /* gold on paper: darker, so it holds contrast on light */
 
   /* Cool tone used only where light temperature is literally the subject */
   --moon:       #C6D5E2;
@@ -31,6 +39,18 @@
   --cream-72:   rgba(243,243,246,0.72);
   --cream-52:   rgba(243,243,246,0.52);
   --cream-34:   rgba(243,243,246,0.34);
+
+  /* Paper: the light half of the alternation. Cool, not the cliché warm
+     cream — same family as the dark graphite, just inverted in value, so
+     the two modes still read as one system. */
+  --paper:      #EEF0F3;
+  --paper-2:    #E2E5EA;
+  --paper-line: rgba(10,10,18,0.10);
+  --paper-line-strong: rgba(10,10,18,0.16);
+  --paper-ink:      #131318;
+  --paper-ink-72:   rgba(19,19,24,0.72);
+  --paper-ink-52:   rgba(19,19,24,0.52);
+  --paper-ink-34:   rgba(19,19,24,0.34);
 
   --font-display: "Syne", "Trebuchet MS", sans-serif;
   --font-body:    "DM Sans", system-ui, sans-serif;
@@ -82,7 +102,7 @@ svg{ display:block; }
 }
 .skip-link:focus{ left:1rem; top:1rem; }
 
-/* Very fine grain so the graphite reads as material, not as flat #000 */
+/* Very fine grain so dark surfaces read as material, not as flat colour */
 .grain{
   position:fixed; inset:0; pointer-events:none; z-index:9999;
   opacity:.03; mix-blend-mode:overlay;
@@ -247,7 +267,7 @@ svg{ display:block; }
 .mobile-nav .btn{ margin-top:.5rem; align-self:flex-start; }
 
 /* ==========================================================================
-   Hero
+   Hero — dark. The night showroom the whole site opens from.
    ========================================================================== */
 .hero{
   position:relative;
@@ -258,12 +278,13 @@ svg{ display:block; }
 }
 .hero-glow{ position:absolute; inset:0; z-index:0; pointer-events:none; }
 .orb{ position:absolute; border-radius:50%; filter: blur(90px); }
-/* Neutral ambience — the room's own glass and light, not a gold wash.
-   Gold stays inside the lamp on the right, where it is literally the light. */
+/* A trace of warmth — this is a room with a lamp in it, so the air near it
+   is allowed to feel warm. Kept low enough that it reads as ambience, not
+   as the gold-wash-over-everything habit this whole palette moved away from. */
 .orb-a{
   width:52vw; height:52vw; max-width:760px; max-height:760px;
   left:-14%; top:-16%;
-  background: radial-gradient(circle, rgba(255,255,255,.09), transparent 68%);
+  background: radial-gradient(circle, rgba(214,147,80,.07), transparent 68%);
   animation: drift-a 22s ease-in-out infinite;
 }
 .orb-b{
@@ -422,106 +443,37 @@ svg{ display:block; }
 .chip-text span{ font-size:.74rem; color: var(--cream-52); letter-spacing:.04em; }
 
 /* ==========================================================================
-   Marcas: el muro que se enciende
-   (echo of the real product wall in the shop: each brand is a plate that
-    switches on, one after another, in clean white light — not amber)
+   Marcas — paper. A typeset line, not a grid of boxes: the brands are
+   information ("who we carry"), not products that each deserve a card.
    ========================================================================== */
-.marcas{ padding: clamp(5rem,10vw,8rem) 0; }
-.marcas-head{ margin-bottom: clamp(2.5rem,5vw,3.5rem); }
-.marcas-head .section-title{ max-width: 20ch; }
+.marcas{ background: var(--paper); color: var(--paper-ink); padding: clamp(5rem,10vw,7rem) 0; }
+.marcas-head{ margin-bottom: clamp(2rem,4vw,2.75rem); }
+.marcas-head .section-title{ max-width: 24ch; color: var(--paper-ink); }
 
-.muro{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: .85rem;
+.marcas-list{
+  font-family: var(--font-display); font-weight:600;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  line-height:1.5;
+  letter-spacing: -.005em;
 }
-
-.placa{
-  position:relative; overflow:hidden;
-  min-height: 140px;
-  display:flex; align-items:center; justify-content:center;
-  padding: 1.4rem 1rem;
-  text-align:center;
-  border-radius: var(--r-sm);
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  transition: border-color .5s var(--ease-out), transform .5s var(--ease-out), background .5s var(--ease-out);
+.marca{
+  color: var(--paper-ink-52);
+  transition: color .3s var(--ease-out);
 }
-.placa-ancha{ grid-column: span 2; }
-.placa-full{ grid-column: 1 / -1; min-height: 96px; align-items:center; justify-content:center; }
-
-/* the light bar sitting at the top of each plate — clean white, not amber */
-.placa-luz{
-  position:absolute; top:0; left:14%; right:14%; height:3px;
-  border-radius: 0 0 var(--r-pill) var(--r-pill);
-  background: linear-gradient(90deg, transparent, #FFFFFF, transparent);
-  opacity:0; transform: scaleX(.3);
-  transition: opacity .5s var(--ease-out), transform .7s var(--ease-out);
+.marca-mas{
+  font-family: var(--font-body); font-weight:500; font-size:.55em;
+  letter-spacing:.08em; text-transform:uppercase; color: var(--paper-ink-34);
+  vertical-align:middle;
 }
-/* the wash the bar throws down over the plate */
-.placa::before{
-  content:""; position:absolute; left:50%; top:-55%;
-  width:130%; height:110%; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center, rgba(255,255,255,.10), transparent 66%);
-  opacity:0; transition: opacity .6s var(--ease-out); pointer-events:none;
-}
-.placa-nombre{
-  position:relative; z-index:1;
-  display:block; width:100%;
-  font-family: var(--font-display); font-weight:700;
-  font-size: clamp(.95rem, 1.7vw, 1.4rem);
-  line-height:1.2;
-  color: var(--cream-34);
-  transition: color .5s var(--ease-out);
-}
-.placa-ancha .placa-nombre{ font-size: clamp(1.4rem, 2.4vw, 2rem); }
-.placa-mas .placa-nombre{ font-family: var(--font-body); font-weight:500; font-size:1rem; letter-spacing:.1em; }
-
-/* lit: applied in sequence by JS as the wall scrolls into view */
-.placa.is-lit{ border-color: rgba(255,255,255,.18); background: var(--glass-bg-strong); }
-.placa.is-lit .placa-luz{ opacity:.85; transform: scaleX(1); }
-.placa.is-lit::before{ opacity:.55; }
-.placa.is-lit .placa-nombre{ color: var(--cream-72); }
-
-/* Press feedback everywhere, including touch */
-.placa:active{ transform: scale(.985); transition-duration: 110ms; }
-.placa:active .placa-luz{ opacity:1; }
-.placa:active::before{ opacity:1; }
-.placa:active .placa-nombre{ color: var(--cream); }
-
-/* On touch there is no hover, so the wall keeps breathing on its own:
-   each plate's light drifts in and out, offset from its neighbours. */
-@media (hover: none){
-  .placa.is-lit .placa-luz{ animation: placa-respira 5.5s var(--ease-in-out) infinite; }
-  .placa.is-lit::before{ animation: placa-respira-halo 5.5s var(--ease-in-out) infinite; }
-  .placa:nth-child(2n)  .placa-luz,
-  .placa:nth-child(2n)::before { animation-delay: .9s; }
-  .placa:nth-child(3n)  .placa-luz,
-  .placa:nth-child(3n)::before { animation-delay: 1.9s; }
-  .placa:nth-child(5n)  .placa-luz,
-  .placa:nth-child(5n)::before { animation-delay: 2.8s; }
-}
-@keyframes placa-respira{
-  0%, 100%{ opacity:.6; }
-  50%     { opacity:1; }
-}
-@keyframes placa-respira-halo{
-  0%, 100%{ opacity:.4; }
-  50%     { opacity:.85; }
+.punto{ color: var(--paper-line-strong); margin: 0 .5rem; }
+@media (hover: hover) and (pointer: fine){
+  .marca:not(.marca-mas):hover{ color: var(--gold-deep); }
 }
 
 /* ==========================================================================
-   Nosotros
+   Nosotros — paper. The quiet editorial statement between two louder moments.
    ========================================================================== */
-.nosotros{ position:relative; padding: clamp(6rem,12vw,10rem) 0; overflow:hidden; }
-.nosotros::before{
-  content:""; position:absolute; left:50%; top:0;
-  width:min(900px,110vw); height:420px; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center top, rgba(255,255,255,.05), transparent 70%);
-  pointer-events:none;
-}
+.nosotros{ position:relative; background: var(--paper); color: var(--paper-ink); padding: clamp(6rem,12vw,10rem) 0; overflow:hidden; }
 .nosotros-grid{
   position:relative; z-index:1;
   display:grid; grid-template-columns: 1fr 1fr; gap: clamp(2.5rem,6vw,5.5rem);
@@ -530,16 +482,18 @@ svg{ display:block; }
 .statement{
   font-family: var(--font-display); font-weight:700;
   font-size: clamp(2rem, 3.5vw, 2.85rem); line-height:1.14;
+  color: var(--paper-ink);
 }
-.nosotros-body p{ font-size:1.05rem; color:var(--cream-72); margin-bottom:1.3rem; max-width:54ch; }
+.nosotros-body p{ font-size:1.05rem; color:var(--paper-ink-72); margin-bottom:1.3rem; max-width:54ch; }
 /* the tagline returns once, small and gold — the second and last time it does */
 .nosotros-signoff{
   font-family: var(--font-display); font-weight:700; font-size:1.55rem;
-  color: var(--gold-soft); margin-top:2rem !important;
+  color: var(--gold-deep); margin-top:2rem !important;
 }
 
 /* ==========================================================================
-   Recorrido por la luz
+   Recorrido por la luz — dark. Unmissable: the whole page is built to earn
+   this moment, so it stays night regardless of what happens around it.
    One-point perspective scenes built from layers. Every scene accepts a real
    photograph as a drop-in replacement: put a file at the path in data-foto and
    it takes over automatically.
@@ -631,78 +585,86 @@ svg{ display:block; }
 .es-estatico .recorrido-progress{ display:none; }
 
 /* ==========================================================================
-   Qué manejamos — glass cards over the page's own ambient light
+   Qué manejamos — paper. A numbered list, not a card grid: these are one
+   inventory, not six unrelated features each pretending to be its own product.
    ========================================================================== */
-.productos{ padding: clamp(6rem,12vw,10rem) 0; }
+.productos{ background: var(--paper); color: var(--paper-ink); padding: clamp(6rem,12vw,10rem) 0; }
 .productos-head{ margin-bottom: clamp(3rem,6vw,4.5rem); }
-.productos-grid{ display:grid; grid-template-columns: repeat(6,1fr); gap: 1.15rem; }
+.productos-head .section-title{ color: var(--paper-ink); }
+.productos-head .section-lede{ color: var(--paper-ink-52); }
 
-.prod-card{
-  position:relative; overflow:hidden;
-  grid-column: span 2;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--r-card);
-  padding: 2.1rem 1.9rem;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-  transition: transform .5s var(--ease-out), border-color .5s, background .5s, box-shadow .5s;
-}
-/* a cool sheen waking up behind the card on hover — glass catching light,
-   not a gold wash. Gold stays reserved for the logo and the CTA. */
-.prod-card::before{
-  content:""; position:absolute; left:50%; top:-40%;
-  width:120%; height:100%; transform:translateX(-50%);
-  background: radial-gradient(ellipse at center, rgba(255,255,255,.08), transparent 70%);
-  opacity:0; transition: opacity .55s var(--ease-out); pointer-events:none;
-}
-.prod-card:hover{
-  transform: translateY(-6px);
-  border-color: rgba(255,255,255,.22);
-  background: var(--glass-bg-strong);
-  box-shadow: var(--shadow-lift), inset 0 1px 0 rgba(255,255,255,.09);
-}
-.prod-card:hover::before{ opacity:1; }
+.lista-productos{ border-top: 1px solid var(--paper-line); }
+.lista-productos li{ border-bottom: 1px solid var(--paper-line); }
 
-.prod-featured{ grid-column: span 3; }
-.prod-wide{ grid-column: span 6; display:flex; align-items:center; gap:2rem; }
-.prod-wide .prod-body{ flex:1; position:relative; z-index:1; }
-.prod-wide .prod-icon{ margin-bottom:0; flex:none; }
-
-.prod-icon{ width:32px; height:32px; color:var(--gold-soft); margin-bottom:1.3rem; position:relative; z-index:1; }
-.prod-card h3{
-  font-family:var(--font-display); font-weight:700; font-size:1.2rem;
-  margin-bottom:.55rem; position:relative; z-index:1;
+.fila-producto{
+  display:flex; align-items:center; gap: 1.5rem;
+  padding: 1.75rem 0;
+  transition: padding-left .4s var(--ease-out);
 }
-.prod-card p{ color:var(--cream-52); font-size:.95rem; position:relative; z-index:1; }
+.fila-num{
+  width: 2.5rem; flex: none;
+  font-size: .95rem; font-weight:600; color: var(--paper-ink-34);
+}
+.fila-texto{ flex:1; min-width:0; }
+.fila-texto h3{
+  font-family: var(--font-display); font-weight:700;
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem); letter-spacing:-.005em;
+  color: var(--paper-ink);
+}
+.fila-texto p{
+  font-size:.95rem; color: var(--paper-ink-52); margin-top:.35rem; max-width:52ch;
+}
+.fila-flecha{
+  flex:none; width: 2.75rem; height:2.75rem;
+  display:grid; place-items:center;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--paper-line-strong);
+  color: var(--paper-ink);
+  transition: transform .35s var(--ease-out), opacity .35s var(--ease-out), border-color .35s var(--ease-out), background .35s var(--ease-out);
+}
+.fila-flecha svg{ width:1.1rem; height:1.1rem; }
+
+@media (hover: hover) and (pointer: fine){
+  .fila-producto:hover{ padding-left: .6rem; }
+  .fila-producto:hover .fila-flecha{
+    transform: translateX(6px);
+    border-color: var(--gold-deep);
+    background: var(--gold-deep);
+    color: #FBF3EA;
+  }
+}
+.fila-producto:active .fila-flecha{ transform: scale(.94); }
 
 /* ==========================================================================
-   Dónde estamos
+   Dónde estamos — paper, with one dark inset: the map is a deliberate
+   window, not another card in a row of cards.
    ========================================================================== */
-.ubicacion{ padding: clamp(6rem,12vw,10rem) 0; }
+.ubicacion{ background: var(--paper); color: var(--paper-ink); padding: clamp(6rem,12vw,10rem) 0; }
+.ubicacion .section-title{ color: var(--paper-ink); }
 .ubicacion-grid{
   display:grid; grid-template-columns: 1.05fr .95fr;
   gap: clamp(2.5rem,6vw,5rem); align-items:center;
 }
-.ubicacion-address{ font-size:1.22rem; margin: 1.3rem 0 1.4rem; line-height:1.55; }
+.ubicacion-address{ font-size:1.22rem; margin: 1.3rem 0 1.4rem; line-height:1.55; color: var(--paper-ink); }
 .ubicacion-hours{ margin:0 0 2.2rem; display:grid; gap:.45rem; }
 .ubicacion-hours > div{ display:flex; align-items:baseline; gap:.9rem; }
 .ubicacion-hours dt{
   font-size:.78rem; letter-spacing:.14em; text-transform:uppercase;
-  color: var(--cream-34); min-width: 11ch;
+  color: var(--paper-ink-34); min-width: 11ch;
 }
-.ubicacion-hours dd{ margin:0; font-size:1rem; color: var(--cream-72); }
+.ubicacion-hours dd{ margin:0; font-size:1rem; color: var(--paper-ink-72); }
 .ubicacion-actions{ display:flex; flex-wrap:wrap; gap:1rem; }
+.ubicacion .btn-ghost{
+  background: rgba(19,19,24,.04); border-color: var(--paper-line-strong); color: var(--paper-ink);
+}
+.ubicacion .btn-ghost:hover{ background: rgba(19,19,24,.08); }
 
 .ubicacion-map{ position:relative; aspect-ratio:1/1; max-height:400px; margin-inline:auto; width:100%; }
 .map-scene{
   position:relative; width:100%; height:100%;
   border-radius: var(--r-card); overflow:hidden;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border:1px solid var(--glass-border);
+  background: linear-gradient(160deg, var(--ink-2), var(--ink));
+  border:1px solid rgba(255,255,255,.09);
   display:flex; align-items:center; justify-content:center;
   box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,.06);
 }
@@ -723,7 +685,7 @@ svg{ display:block; }
 @keyframes ring-pulse{ 0%{ transform:scale(.55); opacity:.85;} 100%{ transform:scale(1.2); opacity:0;} }
 
 /* ==========================================================================
-   Contacto
+   Contacto — dark. The bookend that closes the page on the same note it opened.
    ========================================================================== */
 .contacto{ position:relative; padding: clamp(7rem,14vw,11rem) 0; overflow:hidden; text-align:center; }
 .contacto-glow{
@@ -776,13 +738,6 @@ svg{ display:block; }
 /* ==========================================================================
    Responsive
    ========================================================================== */
-@media (hover: hover) and (pointer: fine){
-  .placa:hover{ transform: translateY(-3px); border-color: rgba(255,255,255,.24); background: var(--glass-bg-strong); }
-  .placa:hover .placa-luz{ opacity:1; transform: scaleX(1); }
-  .placa:hover::before{ opacity:1; }
-  .placa:hover .placa-nombre{ color: var(--cream); }
-}
-
 @media (max-width: 980px){
   .main-nav, .header-cta{ display:none; }
   .nav-toggle{ display:flex; }
@@ -798,25 +753,19 @@ svg{ display:block; }
   .ubicacion-grid{ grid-template-columns:1fr; }
   .ubicacion-map{ max-height:300px; order:-1; }
 
-  .prod-card{ grid-column: span 3; }
-  .prod-featured{ grid-column: span 6; }
-  .prod-wide{ grid-column: span 6; }
-
-  .muro{ grid-template-columns: repeat(2, 1fr); }
-  .placa{ min-height: 118px; }
-  .placa-ancha{ grid-column: span 2; }
+  .fila-producto{ gap:1rem; }
+  .fila-num{ width:1.8rem; }
 }
 
 @media (max-width: 620px){
   .hero-stage{ max-width: 270px; }
   .chip-a{ left:-14%; }
   .chip-b{ right:-14%; }
-  .prod-card, .prod-featured, .prod-wide{ grid-column: span 6; }
-  .prod-wide{ flex-direction:column; align-items:flex-start; gap:1.3rem; }
   .footer-nav{ gap:1.2rem; }
 
-  .muro{ gap:.6rem; }
-  .placa{ min-height: 104px; padding: 1.1rem .8rem; }
+  .marcas-list{ font-size: 1.15rem; line-height:1.7; }
+  .fila-producto{ align-items:flex-start; }
+  .fila-flecha{ width:2.25rem; height:2.25rem; margin-top:.1rem; }
 }
 
 /* ==========================================================================

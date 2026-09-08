@@ -16,7 +16,6 @@
       gsap.registerPlugin(ScrollTrigger);
       heroEntrance();
       scrollReveals();
-      lightUpWall();
     }
   }
 
@@ -75,31 +74,6 @@
     });
   }
 
-  // The brand wall wakes up one plate at a time, the way a showroom does.
-  function lightUpWall() {
-    var wall = document.getElementById('muro');
-    if (!wall) return;
-    var plates = gsap.utils.toArray('#muro .placa');
-    if (!plates.length) return;
-
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      plates.forEach(function (p) { p.classList.add('is-lit'); });
-      return;
-    }
-
-    ScrollTrigger.create({
-      trigger: wall,
-      start: 'top 78%',
-      once: true,
-      onEnter: function () {
-        plates.forEach(function (plate, i) {
-          setTimeout(function () { plate.classList.add('is-lit'); }, i * 110);
-        });
-      }
-    });
-  }
-
   function setupAnchorScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(function (a) {
       a.addEventListener('click', function (e) {
@@ -140,9 +114,8 @@
     if (reduced) return;
 
     var generic = gsap.utils.toArray('[data-reveal]').filter(function (el) {
-      return !el.closest('.hero') && !el.classList.contains('prod-card');
+      return !el.closest('.hero') && !el.classList.contains('fila-producto');
     });
-
 
     generic.forEach(function (el) {
       gsap.from(el, {
@@ -154,14 +127,15 @@
       });
     });
 
-    var cards = gsap.utils.toArray('.prod-card');
-    if (cards.length) {
-      gsap.set(cards, { opacity: 0, y: 28 });
-      ScrollTrigger.batch(cards, {
-        start: 'top 88%',
+    // Product rows enter one after another, like the list is being read out
+    var rows = gsap.utils.toArray('.fila-producto');
+    if (rows.length) {
+      gsap.set(rows, { opacity: 0, y: 22 });
+      ScrollTrigger.batch(rows, {
+        start: 'top 90%',
         once: true,
         onEnter: function (batch) {
-          gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'power3.out' });
+          gsap.to(batch, { opacity: 1, y: 0, duration: 0.7, stagger: 0.09, ease: 'power3.out' });
         }
       });
     }
